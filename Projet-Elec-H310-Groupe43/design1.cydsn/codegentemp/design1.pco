@@ -1,0 +1,118 @@
+# design1
+# 2022-05-22 18:03:24Z
+
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+set_location "ClockBlock" clockblockcell -1 -1 0
+set_io "LED1(0)" iocell 0 0
+set_io "\LCD_Char:LCDPort(0)\" iocell 2 0
+set_io "\LCD_Char:LCDPort(1)\" iocell 2 1
+set_io "\LCD_Char:LCDPort(2)\" iocell 2 2
+set_io "\LCD_Char:LCDPort(3)\" iocell 2 3
+set_io "\LCD_Char:LCDPort(4)\" iocell 2 4
+set_io "\LCD_Char:LCDPort(5)\" iocell 2 5
+set_io "\LCD_Char:LCDPort(6)\" iocell 2 6
+set_io "ROW0(0)" iocell 3 5
+set_io "ROW3(0)" iocell 15 0
+set_io "ROW2(0)" iocell 3 7
+set_io "ROW1(0)" iocell 3 6
+set_io "COL2(0)" iocell 3 3
+set_io "COL1(0)" iocell 3 1
+set_io "POT1(0)" iocell 1 2
+set_io "COL3(0)" iocell 3 4
+set_io "LED2(0)" iocell 0 1
+set_io "LED3(0)" iocell 0 5
+set_io "LED4(0)" iocell 0 6
+set_io "Audio(0)" iocell 15 5
+set_io "Receive(0)" iocell 15 1
+set_io "Transmit(0)" iocell 15 2
+set_io "PWM_to_servo(0)" iocell 1 5
+set_io "PWM_to_servo_1(0)" iocell 2 7
+set_io "SW3(0)" iocell 12 3
+set_io "SW2(0)" iocell 12 4
+set_io "SW1(0)" iocell 12 5
+set_io "\USBUART:Dm(0)\" iocell 15 7
+set_location "\USBUART:Dp\" logicalport -1 -1 15
+set_io "\USBUART:Dp(0)\" iocell 15 6
+set_io "POT2(0)" iocell 15 3
+set_location "\Timer:TimerUDB:status_tc\" 2 0 0 2
+set_location "Net_1748" 3 1 0 2
+set_location "\UART:BUART:counter_load_not\" 2 3 1 1
+set_location "\UART:BUART:tx_status_0\" 3 3 1 1
+set_location "\UART:BUART:tx_status_2\" 3 3 1 0
+set_location "\UART:BUART:rx_counter_load\" 3 1 1 2
+set_location "\UART:BUART:rx_postpoll\" 3 2 1 2
+set_location "\UART:BUART:rx_status_4\" 3 2 0 2
+set_location "\UART:BUART:rx_status_5\" 3 2 0 1
+set_location "\JUMP:PWMUDB:status_2\" 0 1 0 1
+set_location "\DUCK:PWMUDB:status_2\" 0 4 0 1
+set_location "isr_1" interrupt -1 -1 3
+set_location "__ONE__" 1 4 1 1
+set_location "\Timer:TimerUDB:sCTRLReg:SyncCtl:ctrlreg\" 2 0 6
+set_location "\Timer:TimerUDB:rstSts:stsreg\" 2 0 4
+set_location "\Timer:TimerUDB:sT32:timerdp:u0\" 2 0 2
+set_location "\Timer:TimerUDB:sT32:timerdp:u1\" 3 0 2
+set_location "\Timer:TimerUDB:sT32:timerdp:u2\" 3 1 2
+set_location "\Timer:TimerUDB:sT32:timerdp:u3\" 2 1 2
+set_location "\Timer_DAC:TimerHW\" timercell -1 -1 0
+set_location "\VDAC:viDAC8\" vidaccell -1 -1 0
+set_location "\UART:BUART:sTX:TxShifter:u0\" 3 3 2
+set_location "\UART:BUART:sTX:sCLOCK:TxBitClkGen\" 2 3 2
+set_location "\UART:BUART:sTX:TxSts\" 3 3 4
+set_location "\UART:BUART:sRX:RxShifter:u0\" 3 2 2
+set_location "\UART:BUART:sRX:RxBitCounter\" 3 1 7
+set_location "\UART:BUART:sRX:RxSts\" 3 2 4
+set_location "\JUMP:PWMUDB:genblk1:ctrlreg\" 0 1 6
+set_location "\JUMP:PWMUDB:genblk8:stsreg\" 0 1 4
+set_location "\JUMP:PWMUDB:sP16:pwmdp:u0\" 1 1 2
+set_location "\JUMP:PWMUDB:sP16:pwmdp:u1\" 0 1 2
+set_location "\DUCK:PWMUDB:genblk1:ctrlreg\" 1 4 6
+set_location "\DUCK:PWMUDB:genblk8:stsreg\" 0 4 4
+set_location "\DUCK:PWMUDB:sP16:pwmdp:u0\" 1 4 2
+set_location "\DUCK:PWMUDB:sP16:pwmdp:u1\" 0 4 2
+set_location "\USBUART:dp_int\" interrupt -1 -1 12
+set_location "\USBUART:USB\" usbcell -1 -1 0
+set_location "\USBUART:ep_3\" interrupt -1 -1 2
+set_location "\USBUART:ep_2\" interrupt -1 -1 1
+set_location "\USBUART:ep_1\" interrupt -1 -1 0
+set_location "\USBUART:ep_0\" interrupt -1 -1 24
+set_location "\USBUART:bus_reset\" interrupt -1 -1 23
+set_location "\USBUART:arb_int\" interrupt -1 -1 22
+set_location "\USBUART:sof_int\" interrupt -1 -1 21
+set_location "\ADC:DSM\" dsmodcell -1 -1 0
+set_location "\ADC:IRQ\" interrupt -1 -1 29
+set_location "\ADC:DEC\" decimatorcell -1 -1 0
+set_location "isr_RX" interrupt -1 -1 4
+set_location "isr_sw3" interrupt -1 -1 7
+set_location "isr_sw1" interrupt -1 -1 5
+set_location "isr_sw2" interrupt -1 -1 6
+set_location "\Timer_audio:TimerHW\" timercell -1 -1 1
+set_location "Net_1176" 3 0 1 1
+set_location "\UART:BUART:txn\" 3 3 1 2
+set_location "\UART:BUART:tx_state_1\" 2 3 0 1
+set_location "\UART:BUART:tx_state_0\" 3 3 0 0
+set_location "\UART:BUART:tx_state_2\" 2 3 1 0
+set_location "\UART:BUART:tx_bitclk\" 2 3 0 0
+set_location "\UART:BUART:tx_ctrl_mark_last\" 3 1 1 1
+set_location "\UART:BUART:rx_state_0\" 3 2 1 0
+set_location "\UART:BUART:rx_load_fifo\" 3 2 0 3
+set_location "\UART:BUART:rx_state_3\" 3 1 0 1
+set_location "\UART:BUART:rx_state_2\" 3 1 0 0
+set_location "\UART:BUART:rx_bitclk_enable\" 3 1 1 3
+set_location "\UART:BUART:rx_state_stop1_reg\" 3 2 0 0
+set_location "\UART:BUART:pollcount_1\" 3 1 1 0
+set_location "\UART:BUART:pollcount_0\" 3 0 0 2
+set_location "\UART:BUART:rx_status_3\" 3 2 1 3
+set_location "\UART:BUART:rx_last\" 3 0 0 0
+set_location "\JUMP:PWMUDB:runmode_enable\" 0 1 0 0
+set_location "\JUMP:PWMUDB:prevCompare1\" 0 1 0 3
+set_location "\JUMP:PWMUDB:status_0\" 0 1 1 0
+set_location "Net_1793" 0 1 1 3
+set_location "\DUCK:PWMUDB:runmode_enable\" 1 4 0 3
+set_location "\DUCK:PWMUDB:prevCompare1\" 0 4 0 3
+set_location "\DUCK:PWMUDB:status_0\" 0 4 1 0
+set_location "Net_1808" 0 4 1 3

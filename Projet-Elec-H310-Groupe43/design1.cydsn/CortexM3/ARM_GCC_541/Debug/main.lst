@@ -1,0 +1,3199 @@
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.sw3,"ax",%progbits
+  20              		.align	2
+  21              		.global	sw3
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	sw3, %function
+  25              	sw3:
+  26              	.LFB67:
+  27              		.file 1 "main.c"
+   1:main.c        **** /* ========================================
+   2:main.c        ****  *
+   3:main.c        ****  *
+   4:main.c        ****  *
+   5:main.c        ****  * Groupe 43
+   6:main.c        ****  * Projet Digital Electronics
+   7:main.c        ****  * Elec-H310
+   8:main.c        ****  * youssef TALHAOUI 503861 /  Marcus Chretien 498327 
+   9:main.c        ****  * ========================================
+  10:main.c        **** */
+  11:main.c        **** #include "project.h"
+  12:main.c        **** #include "keypad.h"
+  13:main.c        **** #include <stdio.h>
+  14:main.c        **** #include <math.h>
+  15:main.c        **** #define PI 3.14
+  16:main.c        **** 
+  17:main.c        **** 
+  18:main.c        **** float jmp; 
+  19:main.c        **** uint16_t i = 0;
+  20:main.c        **** uint8_t value;
+  21:main.c        **** uint16 ms_count;
+  22:main.c        **** int score= 0 ;
+  23:main.c        **** 
+  24:main.c        **** // Array to contain the values of the sin wave 
+  25:main.c        **** double wave[100];
+  26:main.c        **** 
+  27:main.c        **** void jump() ; 
+  28:main.c        **** void duck() ; 
+  29:main.c        **** 
+  30:main.c        **** CY_ISR(sw1){ // interruption for jump button 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 2
+
+
+  31:main.c        ****     jump();}
+  32:main.c        ****     
+  33:main.c        **** CY_ISR(sw2){ // interruption for duck button  
+  34:main.c        ****     duck();}
+  35:main.c        **** 
+  36:main.c        **** CY_ISR (InterruptionRX) { // interruption for UART 
+  37:main.c        ****     
+  38:main.c        ****     uint8_t status = 0;
+  39:main.c        ****     do{
+  40:main.c        ****         // Checks if no UART Rx errors
+  41:main.c        ****         status = UART_ReadRxStatus () ;
+  42:main.c        ****         if (( status & UART_RX_STS_PAR_ERROR ) |
+  43:main.c        ****             ( status & UART_RX_STS_STOP_ERROR ) |
+  44:main.c        ****             ( status & UART_RX_STS_BREAK ) |
+  45:main.c        ****             ( status & UART_RX_STS_OVERRUN ) ) {
+  46:main.c        ****         // Parity , framing , break or overrun error
+  47:main.c        ****         //LCD_Position (1 ,0) ;
+  48:main.c        ****         //LCD_PrintString (" UART err");
+  49:main.c        ****         }
+  50:main.c        ****     
+  51:main.c        ****         // Check that rx buffer is not empty and get rx data
+  52:main.c        ****         if ( ( status & UART_RX_STS_FIFO_NOTEMPTY ) != 0) {
+  53:main.c        ****             uint8 Receiver = UART_ReadRxData () ;
+  54:main.c        ****         
+  55:main.c        ****             if (Receiver == 'J' || Receiver == 'j' ){ 
+  56:main.c        ****             // if we receive a j then jump
+  57:main.c        ****                 jump();
+  58:main.c        ****             }
+  59:main.c        ****             else if(Receiver == 'D' || Receiver == 'd' ){ 
+  60:main.c        ****             //if we receive a d then duck 
+  61:main.c        ****                 duck();
+  62:main.c        ****             }
+  63:main.c        ****         }
+  64:main.c        ****     } while (( status & UART_RX_STS_FIFO_NOTEMPTY ) != 0) ;
+  65:main.c        **** }
+  66:main.c        **** 
+  67:main.c        **** // interruption for reset button 
+  68:main.c        **** CY_ISR(sw3){
+  28              		.loc 1 68 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 10B5     		push	{r4, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 4, -8
+  35              		.cfi_offset 14, -4
+  69:main.c        **** if (SW3_Read()){
+  36              		.loc 1 69 0
+  37 0002 FFF7FEFF 		bl	SW3_Read
+  38              	.LVL0:
+  39 0006 70B1     		cbz	r0, .L1
+  70:main.c        ****     Timer_Stop();
+  40              		.loc 1 70 0
+  41 0008 FFF7FEFF 		bl	Timer_Stop
+  42              	.LVL1:
+  71:main.c        ****     score=0;
+  43              		.loc 1 71 0
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 3
+
+
+  44 000c 0024     		movs	r4, #0
+  45 000e 064B     		ldr	r3, .L4
+  46 0010 1C60     		str	r4, [r3]
+  72:main.c        ****     LCD_Char_ClearDisplay();
+  47              		.loc 1 72 0
+  48 0012 0120     		movs	r0, #1
+  49 0014 FFF7FEFF 		bl	LCD_Char_WriteControl
+  50              	.LVL2:
+  73:main.c        ****     LCD_Char_Position(0,0);
+  51              		.loc 1 73 0
+  52 0018 2146     		mov	r1, r4
+  53 001a 2046     		mov	r0, r4
+  54 001c FFF7FEFF 		bl	LCD_Char_Position
+  55              	.LVL3:
+  74:main.c        ****     LCD_Char_PrintString("READY");
+  56              		.loc 1 74 0
+  57 0020 0248     		ldr	r0, .L4+4
+  58 0022 FFF7FEFF 		bl	LCD_Char_PrintString
+  59              	.LVL4:
+  60              	.L1:
+  61 0026 10BD     		pop	{r4, pc}
+  62              	.L5:
+  63              		.align	2
+  64              	.L4:
+  65 0028 00000000 		.word	.LANCHOR0
+  66 002c 00000000 		.word	.LC0
+  67              		.cfi_endproc
+  68              	.LFE67:
+  69              		.size	sw3, .-sw3
+  70              		.section	.text.MY_ISR,"ax",%progbits
+  71              		.align	2
+  72              		.global	MY_ISR
+  73              		.thumb
+  74              		.thumb_func
+  75              		.type	MY_ISR, %function
+  76              	MY_ISR:
+  77              	.LFB68:
+  75:main.c        **** }}
+  76:main.c        **** 
+  77:main.c        **** // interruption for the score counting on LCD screen
+  78:main.c        **** // 10pts incrementation every second
+  79:main.c        **** CY_ISR(MY_ISR) {
+  78              		.loc 1 79 0
+  79              		.cfi_startproc
+  80              		@ args = 0, pretend = 0, frame = 0
+  81              		@ frame_needed = 0, uses_anonymous_args = 0
+  82 0000 10B5     		push	{r4, lr}
+  83              		.cfi_def_cfa_offset 8
+  84              		.cfi_offset 4, -8
+  85              		.cfi_offset 14, -4
+  80:main.c        ****     score+=10;
+  86              		.loc 1 80 0
+  87 0002 064C     		ldr	r4, .L8
+  88 0004 2368     		ldr	r3, [r4]
+  89 0006 0A33     		adds	r3, r3, #10
+  90 0008 2360     		str	r3, [r4]
+  81:main.c        ****     LCD_Char_Position(1,0);
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 4
+
+
+  91              		.loc 1 81 0
+  92 000a 0021     		movs	r1, #0
+  93 000c 0120     		movs	r0, #1
+  94 000e FFF7FEFF 		bl	LCD_Char_Position
+  95              	.LVL5:
+  82:main.c        ****     LCD_Char_PrintNumber(score);
+  96              		.loc 1 82 0
+  97 0012 2088     		ldrh	r0, [r4]
+  98 0014 FFF7FEFF 		bl	LCD_Char_PrintU32Number
+  99              	.LVL6:
+ 100 0018 10BD     		pop	{r4, pc}
+ 101              	.L9:
+ 102 001a 00BF     		.align	2
+ 103              	.L8:
+ 104 001c 00000000 		.word	.LANCHOR0
+ 105              		.cfi_endproc
+ 106              	.LFE68:
+ 107              		.size	MY_ISR, .-MY_ISR
+ 108              		.global	__aeabi_d2uiz
+ 109              		.section	.text.duck,"ax",%progbits
+ 110              		.align	2
+ 111              		.global	duck
+ 112              		.thumb
+ 113              		.thumb_func
+ 114              		.type	duck, %function
+ 115              	duck:
+ 116              	.LFB69:
+  83:main.c        **** }
+  84:main.c        **** 
+  85:main.c        **** //duck function
+  86:main.c        **** void duck(){
+ 117              		.loc 1 86 0
+ 118              		.cfi_startproc
+ 119              		@ args = 0, pretend = 0, frame = 1024
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121 0000 30B5     		push	{r4, r5, lr}
+ 122              		.cfi_def_cfa_offset 12
+ 123              		.cfi_offset 4, -12
+ 124              		.cfi_offset 5, -8
+ 125              		.cfi_offset 14, -4
+ 126 0002 ADF2044D 		subw	sp, sp, #1028
+ 127              		.cfi_def_cfa_offset 1040
+  87:main.c        ****     LCD_Char_Position(0,0);  
+ 128              		.loc 1 87 0
+ 129 0006 0021     		movs	r1, #0
+ 130 0008 0846     		mov	r0, r1
+ 131 000a FFF7FEFF 		bl	LCD_Char_Position
+ 132              	.LVL7:
+  88:main.c        ****     LCD_Char_PrintString("Duck ");
+ 133              		.loc 1 88 0
+ 134 000e 2448     		ldr	r0, .L18
+ 135 0010 FFF7FEFF 		bl	LCD_Char_PrintString
+ 136              	.LVL8:
+  89:main.c        ****     LED3_Write(1); //turn the led on 
+ 137              		.loc 1 89 0
+ 138 0014 0120     		movs	r0, #1
+ 139 0016 FFF7FEFF 		bl	LED3_Write
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 5
+
+
+ 140              	.LVL9:
+  90:main.c        ****     LED4_Write(1);
+ 141              		.loc 1 90 0
+ 142 001a 0120     		movs	r0, #1
+ 143 001c FFF7FEFF 		bl	LED4_Write
+ 144              	.LVL10:
+  91:main.c        ****     // Updates servo motor to "push-down" position 
+  92:main.c        ****     DUCK_WriteCompare(2100); 
+ 145              		.loc 1 92 0
+ 146 0020 40F63400 		movw	r0, #2100
+ 147 0024 FFF7FEFF 		bl	DUCK_WriteCompare
+ 148              	.LVL11:
+ 149              	.LBB2:
+  93:main.c        ****     int j=0;
+  94:main.c        ****     
+  95:main.c        ****     // Loop generating ducking sound for 0.5s 
+  96:main.c        ****     for(int i=0;i<500000;i++) { 
+ 150              		.loc 1 96 0
+ 151 0028 0024     		movs	r4, #0
+ 152              	.LBE2:
+  93:main.c        ****     int j=0;
+ 153              		.loc 1 93 0
+ 154 002a 2546     		mov	r5, r4
+ 155              	.LBB3:
+ 156              		.loc 1 96 0
+ 157 002c 13E0     		b	.L11
+ 158              	.LVL12:
+ 159              	.L14:
+  97:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ 160              		.loc 1 97 0
+ 161 002e FFF7FEFF 		bl	Timer_audio_ReadStatusRegister
+ 162              	.LVL13:
+ 163 0032 10F0800F 		tst	r0, #128
+ 164 0036 0DD0     		beq	.L12
+  98:main.c        ****             VDAC_SetValue(wave[j]); 
+ 165              		.loc 1 98 0
+ 166 0038 1A4B     		ldr	r3, .L18+4
+ 167 003a 03EBC503 		add	r3, r3, r5, lsl #3
+ 168 003e D3E90001 		ldrd	r0, [r3]
+ 169 0042 FFF7FEFF 		bl	__aeabi_d2uiz
+ 170              	.LVL14:
+ 171 0046 C0B2     		uxtb	r0, r0
+ 172 0048 FFF7FEFF 		bl	VDAC_SetValue
+ 173              	.LVL15:
+  99:main.c        ****             if (j>99) j=0;
+ 174              		.loc 1 99 0
+ 175 004c 632D     		cmp	r5, #99
+ 176 004e 00DD     		ble	.L13
+ 177 0050 0025     		movs	r5, #0
+ 178              	.LVL16:
+ 179              	.L13:
+ 100:main.c        ****             j++;
+ 180              		.loc 1 100 0
+ 181 0052 0135     		adds	r5, r5, #1
+ 182              	.LVL17:
+ 183              	.L12:
+  96:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 6
+
+
+ 184              		.loc 1 96 0 discriminator 2
+ 185 0054 0134     		adds	r4, r4, #1
+ 186              	.LVL18:
+ 187              	.L11:
+  96:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ 188              		.loc 1 96 0 is_stmt 0 discriminator 1
+ 189 0056 144B     		ldr	r3, .L18+8
+ 190 0058 9C42     		cmp	r4, r3
+ 191 005a E8DD     		ble	.L14
+ 192              	.LBE3:
+ 101:main.c        ****        }
+ 102:main.c        ****     }
+ 103:main.c        ****     // Updates servo motor to "up" position 
+ 104:main.c        ****     DUCK_WriteCompare(2500);
+ 193              		.loc 1 104 0 is_stmt 1
+ 194 005c 40F6C410 		movw	r0, #2500
+ 195 0060 FFF7FEFF 		bl	DUCK_WriteCompare
+ 196              	.LVL19:
+ 105:main.c        ****     LED3_Write(0); //turn off the led
+ 197              		.loc 1 105 0
+ 198 0064 0020     		movs	r0, #0
+ 199 0066 FFF7FEFF 		bl	LED3_Write
+ 200              	.LVL20:
+ 106:main.c        ****     LED4_Write(0);
+ 201              		.loc 1 106 0
+ 202 006a 0020     		movs	r0, #0
+ 203 006c FFF7FEFF 		bl	LED4_Write
+ 204              	.LVL21:
+ 107:main.c        ****     char string[1024];
+ 108:main.c        ****     sprintf(string,"DUCK \n");
+ 205              		.loc 1 108 0
+ 206 0070 0E4A     		ldr	r2, .L18+12
+ 207 0072 92E80300 		ldmia	r2, {r0, r1}
+ 208 0076 0090     		str	r0, [sp]
+ 209 0078 ADF80410 		strh	r1, [sp, #4]	@ movhi
+ 210 007c 090C     		lsrs	r1, r1, #16
+ 211 007e 8DF80610 		strb	r1, [sp, #6]
+ 109:main.c        ****     //Writes "DUCK" in the UART 
+ 110:main.c        ****     UART_PutString(string);
+ 212              		.loc 1 110 0
+ 213 0082 6846     		mov	r0, sp
+ 214 0084 FFF7FEFF 		bl	UART_PutString
+ 215              	.LVL22:
+ 111:main.c        ****     //if the game didn't start , start  the score  
+ 112:main.c        ****     if ( score == 0 ){
+ 216              		.loc 1 112 0
+ 217 0088 094B     		ldr	r3, .L18+16
+ 218 008a 1B68     		ldr	r3, [r3]
+ 219 008c 23B9     		cbnz	r3, .L10
+ 113:main.c        ****         Timer_Start(); // Configure and enable timer
+ 220              		.loc 1 113 0
+ 221 008e FFF7FEFF 		bl	Timer_Start
+ 222              	.LVL23:
+ 114:main.c        ****         isr_1_StartEx(MY_ISR);
+ 223              		.loc 1 114 0
+ 224 0092 0848     		ldr	r0, .L18+20
+ 225 0094 FFF7FEFF 		bl	isr_1_StartEx
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 7
+
+
+ 226              	.LVL24:
+ 227              	.L10:
+ 115:main.c        ****     }
+ 116:main.c        **** }
+ 228              		.loc 1 116 0
+ 229 0098 0DF2044D 		addw	sp, sp, #1028
+ 230              		.cfi_def_cfa_offset 12
+ 231              		@ sp needed
+ 232 009c 30BD     		pop	{r4, r5, pc}
+ 233              	.LVL25:
+ 234              	.L19:
+ 235 009e 00BF     		.align	2
+ 236              	.L18:
+ 237 00a0 08000000 		.word	.LC1
+ 238 00a4 00000000 		.word	wave
+ 239 00a8 1FA10700 		.word	499999
+ 240 00ac 10000000 		.word	.LC2
+ 241 00b0 00000000 		.word	.LANCHOR0
+ 242 00b4 00000000 		.word	MY_ISR
+ 243              		.cfi_endproc
+ 244              	.LFE69:
+ 245              		.size	duck, .-duck
+ 246              		.section	.text.sw2,"ax",%progbits
+ 247              		.align	2
+ 248              		.global	sw2
+ 249              		.thumb
+ 250              		.thumb_func
+ 251              		.type	sw2, %function
+ 252              	sw2:
+ 253              	.LFB65:
+  33:main.c        ****     duck();}
+ 254              		.loc 1 33 0
+ 255              		.cfi_startproc
+ 256              		@ args = 0, pretend = 0, frame = 0
+ 257              		@ frame_needed = 0, uses_anonymous_args = 0
+ 258 0000 08B5     		push	{r3, lr}
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+  34:main.c        **** 
+ 262              		.loc 1 34 0
+ 263 0002 FFF7FEFF 		bl	duck
+ 264              	.LVL26:
+ 265 0006 08BD     		pop	{r3, pc}
+ 266              		.cfi_endproc
+ 267              	.LFE65:
+ 268              		.size	sw2, .-sw2
+ 269              		.section	.text.jump,"ax",%progbits
+ 270              		.align	2
+ 271              		.global	jump
+ 272              		.thumb
+ 273              		.thumb_func
+ 274              		.type	jump, %function
+ 275              	jump:
+ 276              	.LFB70:
+ 117:main.c        **** 
+ 118:main.c        **** 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 8
+
+
+ 119:main.c        **** // Jump function
+ 120:main.c        **** void jump(){
+ 277              		.loc 1 120 0
+ 278              		.cfi_startproc
+ 279              		@ args = 0, pretend = 0, frame = 1024
+ 280              		@ frame_needed = 0, uses_anonymous_args = 0
+ 281 0000 30B5     		push	{r4, r5, lr}
+ 282              		.cfi_def_cfa_offset 12
+ 283              		.cfi_offset 4, -12
+ 284              		.cfi_offset 5, -8
+ 285              		.cfi_offset 14, -4
+ 286 0002 ADF2044D 		subw	sp, sp, #1028
+ 287              		.cfi_def_cfa_offset 1040
+ 121:main.c        ****     LCD_Char_Position(0,0);  // displays "Jump" on the LCD screen
+ 288              		.loc 1 121 0
+ 289 0006 0021     		movs	r1, #0
+ 290 0008 0846     		mov	r0, r1
+ 291 000a FFF7FEFF 		bl	LCD_Char_Position
+ 292              	.LVL27:
+ 122:main.c        ****     LCD_Char_PrintString("Jump ");
+ 293              		.loc 1 122 0
+ 294 000e 2448     		ldr	r0, .L30
+ 295 0010 FFF7FEFF 		bl	LCD_Char_PrintString
+ 296              	.LVL28:
+ 123:main.c        ****     LED1_Write(1); // LEDs switch on 
+ 297              		.loc 1 123 0
+ 298 0014 0120     		movs	r0, #1
+ 299 0016 FFF7FEFF 		bl	LED1_Write
+ 300              	.LVL29:
+ 124:main.c        ****     LED2_Write(1);
+ 301              		.loc 1 124 0
+ 302 001a 0120     		movs	r0, #1
+ 303 001c FFF7FEFF 		bl	LED2_Write
+ 304              	.LVL30:
+ 125:main.c        ****     // Updates servo motor to "push-down" position 
+ 126:main.c        ****     JUMP_WriteCompare(2100);
+ 305              		.loc 1 126 0
+ 306 0020 40F63400 		movw	r0, #2100
+ 307 0024 FFF7FEFF 		bl	JUMP_WriteCompare
+ 308              	.LVL31:
+ 309              	.LBB4:
+ 127:main.c        ****     int j =0;
+ 128:main.c        ****     
+ 129:main.c        ****     // Loop generating jumping sound for 0.5s 
+ 130:main.c        ****      for(int i=0;i<500000;i++){ 
+ 310              		.loc 1 130 0
+ 311 0028 0024     		movs	r4, #0
+ 312              	.LBE4:
+ 127:main.c        ****     int j =0;
+ 313              		.loc 1 127 0
+ 314 002a 2546     		mov	r5, r4
+ 315              	.LBB5:
+ 316              		.loc 1 130 0
+ 317 002c 13E0     		b	.L23
+ 318              	.LVL32:
+ 319              	.L26:
+ 131:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 9
+
+
+ 320              		.loc 1 131 0
+ 321 002e FFF7FEFF 		bl	Timer_audio_ReadStatusRegister
+ 322              	.LVL33:
+ 323 0032 10F0800F 		tst	r0, #128
+ 324 0036 0DD0     		beq	.L24
+ 132:main.c        ****             VDAC_SetValue(wave[j]);
+ 325              		.loc 1 132 0
+ 326 0038 1A4B     		ldr	r3, .L30+4
+ 327 003a 03EBC503 		add	r3, r3, r5, lsl #3
+ 328 003e D3E90001 		ldrd	r0, [r3]
+ 329 0042 FFF7FEFF 		bl	__aeabi_d2uiz
+ 330              	.LVL34:
+ 331 0046 C0B2     		uxtb	r0, r0
+ 332 0048 FFF7FEFF 		bl	VDAC_SetValue
+ 333              	.LVL35:
+ 133:main.c        ****             if (j>99) j=0;
+ 334              		.loc 1 133 0
+ 335 004c 632D     		cmp	r5, #99
+ 336 004e 00DD     		ble	.L25
+ 337 0050 0025     		movs	r5, #0
+ 338              	.LVL36:
+ 339              	.L25:
+ 134:main.c        ****             // increment twice to get a higher pitch
+ 135:main.c        ****             j++;
+ 136:main.c        ****             j++;
+ 340              		.loc 1 136 0
+ 341 0052 0235     		adds	r5, r5, #2
+ 342              	.LVL37:
+ 343              	.L24:
+ 130:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ 344              		.loc 1 130 0 discriminator 2
+ 345 0054 0134     		adds	r4, r4, #1
+ 346              	.LVL38:
+ 347              	.L23:
+ 130:main.c        ****         if(0x80 & Timer_audio_ReadStatusRegister()){
+ 348              		.loc 1 130 0 is_stmt 0 discriminator 1
+ 349 0056 144B     		ldr	r3, .L30+8
+ 350 0058 9C42     		cmp	r4, r3
+ 351 005a E8DD     		ble	.L26
+ 352              	.LBE5:
+ 137:main.c        ****         }
+ 138:main.c        ****     }
+ 139:main.c        ****     // Updates servo motor to "up" position 
+ 140:main.c        ****     JUMP_WriteCompare(2600);
+ 353              		.loc 1 140 0 is_stmt 1
+ 354 005c 40F62820 		movw	r0, #2600
+ 355 0060 FFF7FEFF 		bl	JUMP_WriteCompare
+ 356              	.LVL39:
+ 141:main.c        ****     LED1_Write(0); // turn off the LEDs
+ 357              		.loc 1 141 0
+ 358 0064 0020     		movs	r0, #0
+ 359 0066 FFF7FEFF 		bl	LED1_Write
+ 360              	.LVL40:
+ 142:main.c        ****     LED2_Write(0);
+ 361              		.loc 1 142 0
+ 362 006a 0020     		movs	r0, #0
+ 363 006c FFF7FEFF 		bl	LED2_Write
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 10
+
+
+ 364              	.LVL41:
+ 143:main.c        ****     char string[1024];
+ 144:main.c        ****     //Writes "JUMP" in the UART 
+ 145:main.c        ****     sprintf(string,"JUMP \n");
+ 365              		.loc 1 145 0
+ 366 0070 0E4A     		ldr	r2, .L30+12
+ 367 0072 92E80300 		ldmia	r2, {r0, r1}
+ 368 0076 0090     		str	r0, [sp]
+ 369 0078 ADF80410 		strh	r1, [sp, #4]	@ movhi
+ 370 007c 090C     		lsrs	r1, r1, #16
+ 371 007e 8DF80610 		strb	r1, [sp, #6]
+ 146:main.c        ****     UART_PutString(string); //print in the UART JUMP
+ 372              		.loc 1 146 0
+ 373 0082 6846     		mov	r0, sp
+ 374 0084 FFF7FEFF 		bl	UART_PutString
+ 375              	.LVL42:
+ 147:main.c        ****     //if the game didn't start , start the score  
+ 148:main.c        ****     if ( score == 0 ){
+ 376              		.loc 1 148 0
+ 377 0088 094B     		ldr	r3, .L30+16
+ 378 008a 1B68     		ldr	r3, [r3]
+ 379 008c 23B9     		cbnz	r3, .L22
+ 149:main.c        ****         Timer_Start(); // Configure and enable timer
+ 380              		.loc 1 149 0
+ 381 008e FFF7FEFF 		bl	Timer_Start
+ 382              	.LVL43:
+ 150:main.c        ****         isr_1_StartEx(MY_ISR);
+ 383              		.loc 1 150 0
+ 384 0092 0848     		ldr	r0, .L30+20
+ 385 0094 FFF7FEFF 		bl	isr_1_StartEx
+ 386              	.LVL44:
+ 387              	.L22:
+ 151:main.c        ****     }
+ 152:main.c        **** }
+ 388              		.loc 1 152 0
+ 389 0098 0DF2044D 		addw	sp, sp, #1028
+ 390              		.cfi_def_cfa_offset 12
+ 391              		@ sp needed
+ 392 009c 30BD     		pop	{r4, r5, pc}
+ 393              	.LVL45:
+ 394              	.L31:
+ 395 009e 00BF     		.align	2
+ 396              	.L30:
+ 397 00a0 18000000 		.word	.LC3
+ 398 00a4 00000000 		.word	wave
+ 399 00a8 1FA10700 		.word	499999
+ 400 00ac 20000000 		.word	.LC4
+ 401 00b0 00000000 		.word	.LANCHOR0
+ 402 00b4 00000000 		.word	MY_ISR
+ 403              		.cfi_endproc
+ 404              	.LFE70:
+ 405              		.size	jump, .-jump
+ 406              		.section	.text.sw1,"ax",%progbits
+ 407              		.align	2
+ 408              		.global	sw1
+ 409              		.thumb
+ 410              		.thumb_func
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 11
+
+
+ 411              		.type	sw1, %function
+ 412              	sw1:
+ 413              	.LFB64:
+  30:main.c        ****     jump();}
+ 414              		.loc 1 30 0
+ 415              		.cfi_startproc
+ 416              		@ args = 0, pretend = 0, frame = 0
+ 417              		@ frame_needed = 0, uses_anonymous_args = 0
+ 418 0000 08B5     		push	{r3, lr}
+ 419              		.cfi_def_cfa_offset 8
+ 420              		.cfi_offset 3, -8
+ 421              		.cfi_offset 14, -4
+  31:main.c        ****     
+ 422              		.loc 1 31 0
+ 423 0002 FFF7FEFF 		bl	jump
+ 424              	.LVL46:
+ 425 0006 08BD     		pop	{r3, pc}
+ 426              		.cfi_endproc
+ 427              	.LFE64:
+ 428              		.size	sw1, .-sw1
+ 429              		.section	.text.InterruptionRX,"ax",%progbits
+ 430              		.align	2
+ 431              		.global	InterruptionRX
+ 432              		.thumb
+ 433              		.thumb_func
+ 434              		.type	InterruptionRX, %function
+ 435              	InterruptionRX:
+ 436              	.LFB66:
+  36:main.c        ****     
+ 437              		.loc 1 36 0
+ 438              		.cfi_startproc
+ 439              		@ args = 0, pretend = 0, frame = 0
+ 440              		@ frame_needed = 0, uses_anonymous_args = 0
+ 441 0000 10B5     		push	{r4, lr}
+ 442              		.cfi_def_cfa_offset 8
+ 443              		.cfi_offset 4, -8
+ 444              		.cfi_offset 14, -4
+ 445              	.L39:
+  41:main.c        ****         if (( status & UART_RX_STS_PAR_ERROR ) |
+ 446              		.loc 1 41 0
+ 447 0002 FFF7FEFF 		bl	UART_ReadRxStatus
+ 448              	.LVL47:
+ 449 0006 00F02000 		and	r0, r0, #32
+ 450              	.LVL48:
+  52:main.c        ****             uint8 Receiver = UART_ReadRxData () ;
+ 451              		.loc 1 52 0
+ 452 000a 00F0FF04 		and	r4, r0, #255
+ 453 000e 70B1     		cbz	r0, .L35
+ 454              	.LBB6:
+  53:main.c        ****         
+ 455              		.loc 1 53 0
+ 456 0010 FFF7FEFF 		bl	UART_ReadRxData
+ 457              	.LVL49:
+  55:main.c        ****             // if we receive a j then jump
+ 458              		.loc 1 55 0
+ 459 0014 4A28     		cmp	r0, #74
+ 460 0016 01D0     		beq	.L36
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 12
+
+
+  55:main.c        ****             // if we receive a j then jump
+ 461              		.loc 1 55 0 is_stmt 0 discriminator 1
+ 462 0018 6A28     		cmp	r0, #106
+ 463 001a 02D1     		bne	.L37
+ 464              	.L36:
+  57:main.c        ****             }
+ 465              		.loc 1 57 0 is_stmt 1
+ 466 001c FFF7FEFF 		bl	jump
+ 467              	.LVL50:
+ 468 0020 05E0     		b	.L35
+ 469              	.LVL51:
+ 470              	.L37:
+  59:main.c        ****             //if we receive a d then duck 
+ 471              		.loc 1 59 0
+ 472 0022 4428     		cmp	r0, #68
+ 473 0024 01D0     		beq	.L38
+  59:main.c        ****             //if we receive a d then duck 
+ 474              		.loc 1 59 0 is_stmt 0 discriminator 1
+ 475 0026 6428     		cmp	r0, #100
+ 476 0028 01D1     		bne	.L35
+ 477              	.L38:
+  61:main.c        ****             }
+ 478              		.loc 1 61 0 is_stmt 1
+ 479 002a FFF7FEFF 		bl	duck
+ 480              	.LVL52:
+ 481              	.L35:
+ 482              	.LBE6:
+  64:main.c        **** }
+ 483              		.loc 1 64 0
+ 484 002e 002C     		cmp	r4, #0
+ 485 0030 E7D1     		bne	.L39
+  65:main.c        **** 
+ 486              		.loc 1 65 0
+ 487 0032 10BD     		pop	{r4, pc}
+ 488              		.cfi_endproc
+ 489              	.LFE66:
+ 490              		.size	InterruptionRX, .-InterruptionRX
+ 491              		.global	__aeabi_i2d
+ 492              		.global	__aeabi_dmul
+ 493              		.global	__aeabi_dadd
+ 494              		.section	.text.main,"ax",%progbits
+ 495              		.align	2
+ 496              		.global	main
+ 497              		.thumb
+ 498              		.thumb_func
+ 499              		.type	main, %function
+ 500              	main:
+ 501              	.LFB71:
+ 153:main.c        **** 
+ 154:main.c        **** 
+ 155:main.c        **** 
+ 156:main.c        **** int main(void)
+ 157:main.c        **** {
+ 502              		.loc 1 157 0
+ 503              		.cfi_startproc
+ 504              		@ args = 0, pretend = 0, frame = 0
+ 505              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 13
+
+
+ 506 0000 38B5     		push	{r3, r4, r5, lr}
+ 507              		.cfi_def_cfa_offset 16
+ 508              		.cfi_offset 3, -16
+ 509              		.cfi_offset 4, -12
+ 510              		.cfi_offset 5, -8
+ 511              		.cfi_offset 14, -4
+ 158:main.c        ****     /* Enable global interrupts. */
+ 159:main.c        ****     CyGlobalIntEnable;
+ 512              		.loc 1 159 0
+ 513              		.syntax unified
+ 514              	@ 159 "main.c" 1
+ 515 0002 62B6     		CPSIE   i
+ 516              	@ 0 "" 2
+ 160:main.c        ****     
+ 161:main.c        ****     //start the interruption for the 3 buttons 
+ 162:main.c        ****     isr_sw3_StartEx(sw3);
+ 517              		.loc 1 162 0
+ 518              		.thumb
+ 519              		.syntax unified
+ 520 0004 3C48     		ldr	r0, .L50+8
+ 521 0006 FFF7FEFF 		bl	isr_sw3_StartEx
+ 522              	.LVL53:
+ 163:main.c        ****     isr_sw2_StartEx(sw2);
+ 523              		.loc 1 163 0
+ 524 000a 3C48     		ldr	r0, .L50+12
+ 525 000c FFF7FEFF 		bl	isr_sw2_StartEx
+ 526              	.LVL54:
+ 164:main.c        ****     isr_sw1_StartEx(sw1);
+ 527              		.loc 1 164 0
+ 528 0010 3B48     		ldr	r0, .L50+16
+ 529 0012 FFF7FEFF 		bl	isr_sw1_StartEx
+ 530              	.LVL55:
+ 165:main.c        ****     
+ 166:main.c        ****     //start the interruption to read UART 
+ 167:main.c        ****     isr_RX_StartEx(InterruptionRX);
+ 531              		.loc 1 167 0
+ 532 0016 3B48     		ldr	r0, .L50+20
+ 533 0018 FFF7FEFF 		bl	isr_RX_StartEx
+ 534              	.LVL56:
+ 168:main.c        ****     ADC_Start(); 
+ 535              		.loc 1 168 0
+ 536 001c FFF7FEFF 		bl	ADC_Start
+ 537              	.LVL57:
+ 169:main.c        ****     AMUX_Start();// switch between the photoresistors
+ 538              		.loc 1 169 0
+ 539 0020 FFF7FEFF 		bl	AMUX_Start
+ 540              	.LVL58:
+ 170:main.c        ****     LCD_Char_Start();
+ 541              		.loc 1 170 0
+ 542 0024 FFF7FEFF 		bl	LCD_Char_Start
+ 543              	.LVL59:
+ 171:main.c        ****     LCD_Char_ClearDisplay();
+ 544              		.loc 1 171 0
+ 545 0028 0120     		movs	r0, #1
+ 546 002a FFF7FEFF 		bl	LCD_Char_WriteControl
+ 547              	.LVL60:
+ 172:main.c        ****     Timer_audio_Start();
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 14
+
+
+ 548              		.loc 1 172 0
+ 549 002e FFF7FEFF 		bl	Timer_audio_Start
+ 550              	.LVL61:
+ 173:main.c        ****     VDAC_Start();
+ 551              		.loc 1 173 0
+ 552 0032 FFF7FEFF 		bl	VDAC_Start
+ 553              	.LVL62:
+ 174:main.c        ****     UART_Start();
+ 554              		.loc 1 174 0
+ 555 0036 FFF7FEFF 		bl	UART_Start
+ 556              	.LVL63:
+ 175:main.c        ****     JUMP_Start();
+ 557              		.loc 1 175 0
+ 558 003a FFF7FEFF 		bl	JUMP_Start
+ 559              	.LVL64:
+ 176:main.c        ****     DUCK_Start();
+ 560              		.loc 1 176 0
+ 561 003e FFF7FEFF 		bl	DUCK_Start
+ 562              	.LVL65:
+ 177:main.c        ****     LCD_Char_Init();
+ 563              		.loc 1 177 0
+ 564 0042 FFF7FEFF 		bl	LCD_Char_Init
+ 565              	.LVL66:
+ 178:main.c        ****     LCD_Char_Start();
+ 566              		.loc 1 178 0
+ 567 0046 FFF7FEFF 		bl	LCD_Char_Start
+ 568              	.LVL67:
+ 179:main.c        ****     LCD_Char_PrintString("READY");
+ 569              		.loc 1 179 0
+ 570 004a 2F48     		ldr	r0, .L50+24
+ 571 004c FFF7FEFF 		bl	LCD_Char_PrintString
+ 572              	.LVL68:
+ 180:main.c        ****     keypadInit();
+ 573              		.loc 1 180 0
+ 574 0050 FFF7FEFF 		bl	keypadInit
+ 575              	.LVL69:
+ 181:main.c        ****     ADC_StartConvert();
+ 576              		.loc 1 181 0
+ 577 0054 FFF7FEFF 		bl	ADC_StartConvert
+ 578              	.LVL70:
+ 579              	.LBB7:
+ 182:main.c        ****     
+ 183:main.c        ****     char key;
+ 184:main.c        **** 
+ 185:main.c        ****     //initialising the sin wave for the sound 
+ 186:main.c        ****     for (int i =0 ;i<100;i++){ 
+ 580              		.loc 1 186 0
+ 581 0058 0024     		movs	r4, #0
+ 582 005a 1DE0     		b	.L42
+ 583              	.LVL71:
+ 584              	.L43:
+ 187:main.c        ****         wave[i]= 128*sin( (i/25)* 2 * M_PI)+80;
+ 585              		.loc 1 187 0 discriminator 3
+ 586 005c 2B48     		ldr	r0, .L50+28
+ 587 005e 80FB0430 		smull	r3, r0, r0, r4
+ 588 0062 E317     		asrs	r3, r4, #31
+ 589 0064 C3EBE000 		rsb	r0, r3, r0, asr #3
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 15
+
+
+ 590 0068 4000     		lsls	r0, r0, #1
+ 591 006a FFF7FEFF 		bl	__aeabi_i2d
+ 592              	.LVL72:
+ 593 006e 20A3     		adr	r3, .L50
+ 594 0070 D3E90023 		ldrd	r2, [r3]
+ 595 0074 FFF7FEFF 		bl	__aeabi_dmul
+ 596              	.LVL73:
+ 597 0078 FFF7FEFF 		bl	sin
+ 598              	.LVL74:
+ 599 007c 0022     		movs	r2, #0
+ 600 007e 244B     		ldr	r3, .L50+32
+ 601 0080 FFF7FEFF 		bl	__aeabi_dmul
+ 602              	.LVL75:
+ 603 0084 0022     		movs	r2, #0
+ 604 0086 234B     		ldr	r3, .L50+36
+ 605 0088 FFF7FEFF 		bl	__aeabi_dadd
+ 606              	.LVL76:
+ 607 008c 224B     		ldr	r3, .L50+40
+ 608 008e 03EBC403 		add	r3, r3, r4, lsl #3
+ 609 0092 C3E90001 		strd	r0, [r3]
+ 186:main.c        ****         wave[i]= 128*sin( (i/25)* 2 * M_PI)+80;
+ 610              		.loc 1 186 0 discriminator 3
+ 611 0096 0134     		adds	r4, r4, #1
+ 612              	.LVL77:
+ 613              	.L42:
+ 186:main.c        ****         wave[i]= 128*sin( (i/25)* 2 * M_PI)+80;
+ 614              		.loc 1 186 0 is_stmt 0 discriminator 1
+ 615 0098 632C     		cmp	r4, #99
+ 616 009a DFDD     		ble	.L43
+ 617              	.LVL78:
+ 618              	.L44:
+ 619              	.LBE7:
+ 620              	.LBB8:
+ 188:main.c        ****     }
+ 189:main.c        ****     for(;;){
+ 190:main.c        ****         key=keypadScan();
+ 621              		.loc 1 190 0 is_stmt 1
+ 622 009c FFF7FEFF 		bl	keypadScan
+ 623              	.LVL79:
+ 624 00a0 0446     		mov	r4, r0
+ 625              	.LVL80:
+ 191:main.c        ****         ADC_IsEndConversion(ADC_WAIT_FOR_RESULT); //to read the value of the resistors
+ 626              		.loc 1 191 0
+ 627 00a2 0020     		movs	r0, #0
+ 628 00a4 FFF7FEFF 		bl	ADC_IsEndConversion
+ 629              	.LVL81:
+ 192:main.c        ****         
+ 193:main.c        ****         AMUX_Select(0); //switch to the jump resistor 
+ 630              		.loc 1 193 0
+ 631 00a8 0020     		movs	r0, #0
+ 632 00aa FFF7FEFF 		bl	AMUX_Select
+ 633              	.LVL82:
+ 194:main.c        ****         int32 tmp_pot1=ADC_GetResult32(); 
+ 634              		.loc 1 194 0
+ 635 00ae FFF7FEFF 		bl	ADC_GetResult32
+ 636              	.LVL83:
+ 195:main.c        ****         int16 potjump=ADC_CountsTo_mVolts(tmp_pot1);
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 16
+
+
+ 637              		.loc 1 195 0
+ 638 00b2 FFF7FEFF 		bl	ADC_CountsTo_mVolts
+ 639              	.LVL84:
+ 640 00b6 0546     		mov	r5, r0
+ 641              	.LVL85:
+ 196:main.c        ****         
+ 197:main.c        ****         CyDelay(10); // Delay needed for the AMUX
+ 642              		.loc 1 197 0
+ 643 00b8 0A20     		movs	r0, #10
+ 644 00ba FFF7FEFF 		bl	CyDelay
+ 645              	.LVL86:
+ 198:main.c        ****         
+ 199:main.c        ****         AMUX_Select(1); //switch to the duck resistor
+ 646              		.loc 1 199 0
+ 647 00be 0120     		movs	r0, #1
+ 648 00c0 FFF7FEFF 		bl	AMUX_Select
+ 649              	.LVL87:
+ 200:main.c        ****         int32 tmp_pot2=ADC_GetResult32();
+ 650              		.loc 1 200 0
+ 651 00c4 FFF7FEFF 		bl	ADC_GetResult32
+ 652              	.LVL88:
+ 201:main.c        ****         int16 potduck=ADC_CountsTo_mVolts(tmp_pot2);
+ 653              		.loc 1 201 0
+ 654 00c8 FFF7FEFF 		bl	ADC_CountsTo_mVolts
+ 655              	.LVL89:
+ 202:main.c        **** 
+ 203:main.c        ****          if ( (potjump> 3200) || key=='2' ){ // if object detected or key pressed
+ 656              		.loc 1 203 0
+ 657 00cc B5F5486F 		cmp	r5, #3200
+ 658 00d0 01DC     		bgt	.L45
+ 659              		.loc 1 203 0 is_stmt 0 discriminator 1
+ 660 00d2 322C     		cmp	r4, #50
+ 661 00d4 02D1     		bne	.L46
+ 662              	.L45:
+ 204:main.c        ****             jump();
+ 663              		.loc 1 204 0 is_stmt 1
+ 664 00d6 FFF7FEFF 		bl	jump
+ 665              	.LVL90:
+ 666 00da DFE7     		b	.L44
+ 667              	.LVL91:
+ 668              	.L46:
+ 205:main.c        ****         }
+ 206:main.c        ****         else if ( (potduck>3550 ) || key=='5'  ) {// if object detected or key pressed
+ 669              		.loc 1 206 0
+ 670 00dc 40F6DE53 		movw	r3, #3550
+ 671 00e0 9842     		cmp	r0, r3
+ 672 00e2 01DC     		bgt	.L48
+ 673              		.loc 1 206 0 is_stmt 0 discriminator 1
+ 674 00e4 352C     		cmp	r4, #53
+ 675 00e6 D9D1     		bne	.L44
+ 676              	.L48:
+ 207:main.c        ****                 duck();
+ 677              		.loc 1 207 0 is_stmt 1
+ 678 00e8 FFF7FEFF 		bl	duck
+ 679              	.LVL92:
+ 680 00ec D6E7     		b	.L44
+ 681              	.L51:
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 17
+
+
+ 682 00ee 00BF     		.align	3
+ 683              	.L50:
+ 684 00f0 182D4454 		.word	1413754136
+ 685 00f4 FB210940 		.word	1074340347
+ 686 00f8 00000000 		.word	sw3
+ 687 00fc 00000000 		.word	sw2
+ 688 0100 00000000 		.word	sw1
+ 689 0104 00000000 		.word	InterruptionRX
+ 690 0108 00000000 		.word	.LC0
+ 691 010c 1F85EB51 		.word	1374389535
+ 692 0110 00006040 		.word	1080033280
+ 693 0114 00005440 		.word	1079246848
+ 694 0118 00000000 		.word	wave
+ 695              	.LBE8:
+ 696              		.cfi_endproc
+ 697              	.LFE71:
+ 698              		.size	main, .-main
+ 699              		.comm	wave,800,8
+ 700              		.global	score
+ 701              		.comm	ms_count,2,2
+ 702              		.comm	value,1,1
+ 703              		.global	i
+ 704              		.comm	jmp,4,4
+ 705              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 706              		.align	2
+ 707              	.LC0:
+ 708 0000 52454144 		.ascii	"READY\000"
+ 708      5900
+ 709 0006 0000     		.space	2
+ 710              	.LC1:
+ 711 0008 4475636B 		.ascii	"Duck \000"
+ 711      2000
+ 712 000e 0000     		.space	2
+ 713              	.LC2:
+ 714 0010 4455434B 		.ascii	"DUCK \012\000"
+ 714      200A00
+ 715 0017 00       		.space	1
+ 716              	.LC3:
+ 717 0018 4A756D70 		.ascii	"Jump \000"
+ 717      2000
+ 718 001e 0000     		.space	2
+ 719              	.LC4:
+ 720 0020 4A554D50 		.ascii	"JUMP \012\000"
+ 720      200A00
+ 721              		.bss
+ 722              		.align	2
+ 723              		.set	.LANCHOR0,. + 0
+ 724              		.type	score, %object
+ 725              		.size	score, 4
+ 726              	score:
+ 727 0000 00000000 		.space	4
+ 728              		.type	i, %object
+ 729              		.size	i, 2
+ 730              	i:
+ 731 0004 0000     		.space	2
+ 732              		.text
+ 733              	.Letext0:
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 18
+
+
+ 734              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 735              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4.
+ 736              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 737              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 738              		.file 6 "Generated_Source\\PSoC5/SW3.h"
+ 739              		.file 7 "Generated_Source\\PSoC5/Timer.h"
+ 740              		.file 8 "Generated_Source\\PSoC5/LCD_Char.h"
+ 741              		.file 9 "Generated_Source\\PSoC5/Timer_audio.h"
+ 742              		.file 10 "Generated_Source\\PSoC5/VDAC.h"
+ 743              		.file 11 "Generated_Source\\PSoC5/LED3.h"
+ 744              		.file 12 "Generated_Source\\PSoC5/LED4.h"
+ 745              		.file 13 "Generated_Source\\PSoC5/DUCK.h"
+ 746              		.file 14 "Generated_Source\\PSoC5/UART.h"
+ 747              		.file 15 "Generated_Source\\PSoC5/isr_1.h"
+ 748              		.file 16 "Generated_Source\\PSoC5/LED1.h"
+ 749              		.file 17 "Generated_Source\\PSoC5/LED2.h"
+ 750              		.file 18 "Generated_Source\\PSoC5/JUMP.h"
+ 751              		.file 19 "keypad.h"
+ 752              		.file 20 "Generated_Source\\PSoC5/ADC.h"
+ 753              		.file 21 "Generated_Source\\PSoC5/AMUX.h"
+ 754              		.file 22 "Generated_Source\\PSoC5/CyLib.h"
+ 755              		.file 23 "Generated_Source\\PSoC5/isr_sw3.h"
+ 756              		.file 24 "Generated_Source\\PSoC5/isr_sw2.h"
+ 757              		.file 25 "Generated_Source\\PSoC5/isr_sw1.h"
+ 758              		.file 26 "Generated_Source\\PSoC5/isr_RX.h"
+ 759              		.file 27 "c:\\program files (x86)\\cypress\\psoc creator\\4.4\\psoc creator\\import\\gnu\\arm\\5.4
+ 760              		.section	.debug_info,"",%progbits
+ 761              	.Ldebug_info0:
+ 762 0000 09090000 		.4byte	0x909
+ 763 0004 0400     		.2byte	0x4
+ 764 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 765 000a 04       		.byte	0x4
+ 766 000b 01       		.uleb128 0x1
+ 767 000c 03040000 		.4byte	.LASF80
+ 768 0010 0C       		.byte	0xc
+ 769 0011 61030000 		.4byte	.LASF81
+ 770 0015 BB020000 		.4byte	.LASF82
+ 771 0019 30000000 		.4byte	.Ldebug_ranges0+0x30
+ 772 001d 00000000 		.4byte	0
+ 773 0021 00000000 		.4byte	.Ldebug_line0
+ 774 0025 02       		.uleb128 0x2
+ 775 0026 01       		.byte	0x1
+ 776 0027 06       		.byte	0x6
+ 777 0028 2E020000 		.4byte	.LASF0
+ 778 002c 03       		.uleb128 0x3
+ 779 002d A4040000 		.4byte	.LASF3
+ 780 0031 02       		.byte	0x2
+ 781 0032 1D       		.byte	0x1d
+ 782 0033 37000000 		.4byte	0x37
+ 783 0037 02       		.uleb128 0x2
+ 784 0038 01       		.byte	0x1
+ 785 0039 08       		.byte	0x8
+ 786 003a FE010000 		.4byte	.LASF1
+ 787 003e 02       		.uleb128 0x2
+ 788 003f 02       		.byte	0x2
+ 789 0040 05       		.byte	0x5
+ 790 0041 6F000000 		.4byte	.LASF2
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 19
+
+
+ 791 0045 03       		.uleb128 0x3
+ 792 0046 B4000000 		.4byte	.LASF4
+ 793 004a 02       		.byte	0x2
+ 794 004b 2B       		.byte	0x2b
+ 795 004c 50000000 		.4byte	0x50
+ 796 0050 02       		.uleb128 0x2
+ 797 0051 02       		.byte	0x2
+ 798 0052 07       		.byte	0x7
+ 799 0053 97020000 		.4byte	.LASF5
+ 800 0057 03       		.uleb128 0x3
+ 801 0058 B9030000 		.4byte	.LASF6
+ 802 005c 02       		.byte	0x2
+ 803 005d 3F       		.byte	0x3f
+ 804 005e 62000000 		.4byte	0x62
+ 805 0062 02       		.uleb128 0x2
+ 806 0063 04       		.byte	0x4
+ 807 0064 05       		.byte	0x5
+ 808 0065 5A010000 		.4byte	.LASF7
+ 809 0069 02       		.uleb128 0x2
+ 810 006a 04       		.byte	0x4
+ 811 006b 07       		.byte	0x7
+ 812 006c 7A030000 		.4byte	.LASF8
+ 813 0070 02       		.uleb128 0x2
+ 814 0071 08       		.byte	0x8
+ 815 0072 05       		.byte	0x5
+ 816 0073 32010000 		.4byte	.LASF9
+ 817 0077 02       		.uleb128 0x2
+ 818 0078 08       		.byte	0x8
+ 819 0079 07       		.byte	0x7
+ 820 007a 40020000 		.4byte	.LASF10
+ 821 007e 04       		.uleb128 0x4
+ 822 007f 04       		.byte	0x4
+ 823 0080 05       		.byte	0x5
+ 824 0081 696E7400 		.ascii	"int\000"
+ 825 0085 02       		.uleb128 0x2
+ 826 0086 04       		.byte	0x4
+ 827 0087 07       		.byte	0x7
+ 828 0088 67020000 		.4byte	.LASF11
+ 829 008c 03       		.uleb128 0x3
+ 830 008d EF000000 		.4byte	.LASF12
+ 831 0091 03       		.byte	0x3
+ 832 0092 18       		.byte	0x18
+ 833 0093 2C000000 		.4byte	0x2c
+ 834 0097 03       		.uleb128 0x3
+ 835 0098 74020000 		.4byte	.LASF13
+ 836 009c 03       		.byte	0x3
+ 837 009d 24       		.byte	0x24
+ 838 009e 45000000 		.4byte	0x45
+ 839 00a2 03       		.uleb128 0x3
+ 840 00a3 10030000 		.4byte	.LASF14
+ 841 00a7 03       		.byte	0x3
+ 842 00a8 2C       		.byte	0x2c
+ 843 00a9 57000000 		.4byte	0x57
+ 844 00ad 05       		.uleb128 0x5
+ 845 00ae 20030000 		.4byte	.LASF15
+ 846 00b2 04       		.byte	0x4
+ 847 00b3 E801     		.2byte	0x1e8
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 20
+
+
+ 848 00b5 37000000 		.4byte	0x37
+ 849 00b9 05       		.uleb128 0x5
+ 850 00ba E8000000 		.4byte	.LASF16
+ 851 00be 04       		.byte	0x4
+ 852 00bf E901     		.2byte	0x1e9
+ 853 00c1 50000000 		.4byte	0x50
+ 854 00c5 05       		.uleb128 0x5
+ 855 00c6 02010000 		.4byte	.LASF17
+ 856 00ca 04       		.byte	0x4
+ 857 00cb EC01     		.2byte	0x1ec
+ 858 00cd 3E000000 		.4byte	0x3e
+ 859 00d1 05       		.uleb128 0x5
+ 860 00d2 8C030000 		.4byte	.LASF18
+ 861 00d6 04       		.byte	0x4
+ 862 00d7 ED01     		.2byte	0x1ed
+ 863 00d9 62000000 		.4byte	0x62
+ 864 00dd 02       		.uleb128 0x2
+ 865 00de 04       		.byte	0x4
+ 866 00df 04       		.byte	0x4
+ 867 00e0 13010000 		.4byte	.LASF19
+ 868 00e4 02       		.uleb128 0x2
+ 869 00e5 08       		.byte	0x8
+ 870 00e6 04       		.byte	0x4
+ 871 00e7 92030000 		.4byte	.LASF20
+ 872 00eb 02       		.uleb128 0x2
+ 873 00ec 01       		.byte	0x1
+ 874 00ed 08       		.byte	0x8
+ 875 00ee B6020000 		.4byte	.LASF21
+ 876 00f2 02       		.uleb128 0x2
+ 877 00f3 08       		.byte	0x8
+ 878 00f4 04       		.byte	0x4
+ 879 00f5 E7010000 		.4byte	.LASF22
+ 880 00f9 02       		.uleb128 0x2
+ 881 00fa 04       		.byte	0x4
+ 882 00fb 07       		.byte	0x7
+ 883 00fc 79000000 		.4byte	.LASF23
+ 884 0100 06       		.uleb128 0x6
+ 885 0101 73773300 		.ascii	"sw3\000"
+ 886 0105 01       		.byte	0x1
+ 887 0106 44       		.byte	0x44
+ 888 0107 00000000 		.4byte	.LFB67
+ 889 010b 30000000 		.4byte	.LFE67-.LFB67
+ 890 010f 01       		.uleb128 0x1
+ 891 0110 9C       		.byte	0x9c
+ 892 0111 68010000 		.4byte	0x168
+ 893 0115 07       		.uleb128 0x7
+ 894 0116 06000000 		.4byte	.LVL0
+ 895 011a 49070000 		.4byte	0x749
+ 896 011e 07       		.uleb128 0x7
+ 897 011f 0C000000 		.4byte	.LVL1
+ 898 0123 54070000 		.4byte	0x754
+ 899 0127 08       		.uleb128 0x8
+ 900 0128 18000000 		.4byte	.LVL2
+ 901 012c 5F070000 		.4byte	0x75f
+ 902 0130 3A010000 		.4byte	0x13a
+ 903 0134 09       		.uleb128 0x9
+ 904 0135 01       		.uleb128 0x1
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 21
+
+
+ 905 0136 50       		.byte	0x50
+ 906 0137 01       		.uleb128 0x1
+ 907 0138 31       		.byte	0x31
+ 908 0139 00       		.byte	0
+ 909 013a 08       		.uleb128 0x8
+ 910 013b 20000000 		.4byte	.LVL3
+ 911 013f 6A070000 		.4byte	0x76a
+ 912 0143 54010000 		.4byte	0x154
+ 913 0147 09       		.uleb128 0x9
+ 914 0148 01       		.uleb128 0x1
+ 915 0149 50       		.byte	0x50
+ 916 014a 02       		.uleb128 0x2
+ 917 014b 74       		.byte	0x74
+ 918 014c 00       		.sleb128 0
+ 919 014d 09       		.uleb128 0x9
+ 920 014e 01       		.uleb128 0x1
+ 921 014f 51       		.byte	0x51
+ 922 0150 02       		.uleb128 0x2
+ 923 0151 74       		.byte	0x74
+ 924 0152 00       		.sleb128 0
+ 925 0153 00       		.byte	0
+ 926 0154 0A       		.uleb128 0xa
+ 927 0155 26000000 		.4byte	.LVL4
+ 928 0159 75070000 		.4byte	0x775
+ 929 015d 09       		.uleb128 0x9
+ 930 015e 01       		.uleb128 0x1
+ 931 015f 50       		.byte	0x50
+ 932 0160 05       		.uleb128 0x5
+ 933 0161 03       		.byte	0x3
+ 934 0162 00000000 		.4byte	.LC0
+ 935 0166 00       		.byte	0
+ 936 0167 00       		.byte	0
+ 937 0168 0B       		.uleb128 0xb
+ 938 0169 09030000 		.4byte	.LASF24
+ 939 016d 01       		.byte	0x1
+ 940 016e 4F       		.byte	0x4f
+ 941 016f 00000000 		.4byte	.LFB68
+ 942 0173 20000000 		.4byte	.LFE68-.LFB68
+ 943 0177 01       		.uleb128 0x1
+ 944 0178 9C       		.byte	0x9c
+ 945 0179 9F010000 		.4byte	0x19f
+ 946 017d 08       		.uleb128 0x8
+ 947 017e 12000000 		.4byte	.LVL5
+ 948 0182 6A070000 		.4byte	0x76a
+ 949 0186 95010000 		.4byte	0x195
+ 950 018a 09       		.uleb128 0x9
+ 951 018b 01       		.uleb128 0x1
+ 952 018c 50       		.byte	0x50
+ 953 018d 01       		.uleb128 0x1
+ 954 018e 31       		.byte	0x31
+ 955 018f 09       		.uleb128 0x9
+ 956 0190 01       		.uleb128 0x1
+ 957 0191 51       		.byte	0x51
+ 958 0192 01       		.uleb128 0x1
+ 959 0193 30       		.byte	0x30
+ 960 0194 00       		.byte	0
+ 961 0195 07       		.uleb128 0x7
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 22
+
+
+ 962 0196 18000000 		.4byte	.LVL6
+ 963 019a 80070000 		.4byte	0x780
+ 964 019e 00       		.byte	0
+ 965 019f 0C       		.uleb128 0xc
+ 966 01a0 F1030000 		.4byte	.LASF26
+ 967 01a4 01       		.byte	0x1
+ 968 01a5 56       		.byte	0x56
+ 969 01a6 00000000 		.4byte	.LFB69
+ 970 01aa B8000000 		.4byte	.LFE69-.LFB69
+ 971 01ae 01       		.uleb128 0x1
+ 972 01af 9C       		.byte	0x9c
+ 973 01b0 CF020000 		.4byte	0x2cf
+ 974 01b4 0D       		.uleb128 0xd
+ 975 01b5 6A00     		.ascii	"j\000"
+ 976 01b7 01       		.byte	0x1
+ 977 01b8 5D       		.byte	0x5d
+ 978 01b9 7E000000 		.4byte	0x7e
+ 979 01bd 00000000 		.4byte	.LLST0
+ 980 01c1 0E       		.uleb128 0xe
+ 981 01c2 6C010000 		.4byte	.LASF25
+ 982 01c6 01       		.byte	0x1
+ 983 01c7 6B       		.byte	0x6b
+ 984 01c8 CF020000 		.4byte	0x2cf
+ 985 01cc 03       		.uleb128 0x3
+ 986 01cd 91       		.byte	0x91
+ 987 01ce F077     		.sleb128 -1040
+ 988 01d0 0F       		.uleb128 0xf
+ 989 01d1 00000000 		.4byte	.Ldebug_ranges0+0
+ 990 01d5 F9010000 		.4byte	0x1f9
+ 991 01d9 0D       		.uleb128 0xd
+ 992 01da 6900     		.ascii	"i\000"
+ 993 01dc 01       		.byte	0x1
+ 994 01dd 60       		.byte	0x60
+ 995 01de 7E000000 		.4byte	0x7e
+ 996 01e2 1F000000 		.4byte	.LLST1
+ 997 01e6 07       		.uleb128 0x7
+ 998 01e7 32000000 		.4byte	.LVL13
+ 999 01eb 8B070000 		.4byte	0x78b
+ 1000 01ef 07       		.uleb128 0x7
+ 1001 01f0 4C000000 		.4byte	.LVL15
+ 1002 01f4 96070000 		.4byte	0x796
+ 1003 01f8 00       		.byte	0
+ 1004 01f9 08       		.uleb128 0x8
+ 1005 01fa 0E000000 		.4byte	.LVL7
+ 1006 01fe 6A070000 		.4byte	0x76a
+ 1007 0202 11020000 		.4byte	0x211
+ 1008 0206 09       		.uleb128 0x9
+ 1009 0207 01       		.uleb128 0x1
+ 1010 0208 50       		.byte	0x50
+ 1011 0209 01       		.uleb128 0x1
+ 1012 020a 30       		.byte	0x30
+ 1013 020b 09       		.uleb128 0x9
+ 1014 020c 01       		.uleb128 0x1
+ 1015 020d 51       		.byte	0x51
+ 1016 020e 01       		.uleb128 0x1
+ 1017 020f 30       		.byte	0x30
+ 1018 0210 00       		.byte	0
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 23
+
+
+ 1019 0211 08       		.uleb128 0x8
+ 1020 0212 14000000 		.4byte	.LVL8
+ 1021 0216 75070000 		.4byte	0x775
+ 1022 021a 28020000 		.4byte	0x228
+ 1023 021e 09       		.uleb128 0x9
+ 1024 021f 01       		.uleb128 0x1
+ 1025 0220 50       		.byte	0x50
+ 1026 0221 05       		.uleb128 0x5
+ 1027 0222 03       		.byte	0x3
+ 1028 0223 08000000 		.4byte	.LC1
+ 1029 0227 00       		.byte	0
+ 1030 0228 08       		.uleb128 0x8
+ 1031 0229 1A000000 		.4byte	.LVL9
+ 1032 022d A1070000 		.4byte	0x7a1
+ 1033 0231 3B020000 		.4byte	0x23b
+ 1034 0235 09       		.uleb128 0x9
+ 1035 0236 01       		.uleb128 0x1
+ 1036 0237 50       		.byte	0x50
+ 1037 0238 01       		.uleb128 0x1
+ 1038 0239 31       		.byte	0x31
+ 1039 023a 00       		.byte	0
+ 1040 023b 08       		.uleb128 0x8
+ 1041 023c 20000000 		.4byte	.LVL10
+ 1042 0240 AC070000 		.4byte	0x7ac
+ 1043 0244 4E020000 		.4byte	0x24e
+ 1044 0248 09       		.uleb128 0x9
+ 1045 0249 01       		.uleb128 0x1
+ 1046 024a 50       		.byte	0x50
+ 1047 024b 01       		.uleb128 0x1
+ 1048 024c 31       		.byte	0x31
+ 1049 024d 00       		.byte	0
+ 1050 024e 08       		.uleb128 0x8
+ 1051 024f 28000000 		.4byte	.LVL11
+ 1052 0253 B7070000 		.4byte	0x7b7
+ 1053 0257 63020000 		.4byte	0x263
+ 1054 025b 09       		.uleb128 0x9
+ 1055 025c 01       		.uleb128 0x1
+ 1056 025d 50       		.byte	0x50
+ 1057 025e 03       		.uleb128 0x3
+ 1058 025f 0A       		.byte	0xa
+ 1059 0260 3408     		.2byte	0x834
+ 1060 0262 00       		.byte	0
+ 1061 0263 08       		.uleb128 0x8
+ 1062 0264 64000000 		.4byte	.LVL19
+ 1063 0268 B7070000 		.4byte	0x7b7
+ 1064 026c 78020000 		.4byte	0x278
+ 1065 0270 09       		.uleb128 0x9
+ 1066 0271 01       		.uleb128 0x1
+ 1067 0272 50       		.byte	0x50
+ 1068 0273 03       		.uleb128 0x3
+ 1069 0274 0A       		.byte	0xa
+ 1070 0275 C409     		.2byte	0x9c4
+ 1071 0277 00       		.byte	0
+ 1072 0278 08       		.uleb128 0x8
+ 1073 0279 6A000000 		.4byte	.LVL20
+ 1074 027d A1070000 		.4byte	0x7a1
+ 1075 0281 8B020000 		.4byte	0x28b
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 24
+
+
+ 1076 0285 09       		.uleb128 0x9
+ 1077 0286 01       		.uleb128 0x1
+ 1078 0287 50       		.byte	0x50
+ 1079 0288 01       		.uleb128 0x1
+ 1080 0289 30       		.byte	0x30
+ 1081 028a 00       		.byte	0
+ 1082 028b 08       		.uleb128 0x8
+ 1083 028c 70000000 		.4byte	.LVL21
+ 1084 0290 AC070000 		.4byte	0x7ac
+ 1085 0294 9E020000 		.4byte	0x29e
+ 1086 0298 09       		.uleb128 0x9
+ 1087 0299 01       		.uleb128 0x1
+ 1088 029a 50       		.byte	0x50
+ 1089 029b 01       		.uleb128 0x1
+ 1090 029c 30       		.byte	0x30
+ 1091 029d 00       		.byte	0
+ 1092 029e 08       		.uleb128 0x8
+ 1093 029f 88000000 		.4byte	.LVL22
+ 1094 02a3 C2070000 		.4byte	0x7c2
+ 1095 02a7 B2020000 		.4byte	0x2b2
+ 1096 02ab 09       		.uleb128 0x9
+ 1097 02ac 01       		.uleb128 0x1
+ 1098 02ad 50       		.byte	0x50
+ 1099 02ae 02       		.uleb128 0x2
+ 1100 02af 7D       		.byte	0x7d
+ 1101 02b0 00       		.sleb128 0
+ 1102 02b1 00       		.byte	0
+ 1103 02b2 07       		.uleb128 0x7
+ 1104 02b3 92000000 		.4byte	.LVL23
+ 1105 02b7 CD070000 		.4byte	0x7cd
+ 1106 02bb 0A       		.uleb128 0xa
+ 1107 02bc 98000000 		.4byte	.LVL24
+ 1108 02c0 D8070000 		.4byte	0x7d8
+ 1109 02c4 09       		.uleb128 0x9
+ 1110 02c5 01       		.uleb128 0x1
+ 1111 02c6 50       		.byte	0x50
+ 1112 02c7 05       		.uleb128 0x5
+ 1113 02c8 03       		.byte	0x3
+ 1114 02c9 00000000 		.4byte	MY_ISR
+ 1115 02cd 00       		.byte	0
+ 1116 02ce 00       		.byte	0
+ 1117 02cf 10       		.uleb128 0x10
+ 1118 02d0 EB000000 		.4byte	0xeb
+ 1119 02d4 E0020000 		.4byte	0x2e0
+ 1120 02d8 11       		.uleb128 0x11
+ 1121 02d9 F9000000 		.4byte	0xf9
+ 1122 02dd FF03     		.2byte	0x3ff
+ 1123 02df 00       		.byte	0
+ 1124 02e0 06       		.uleb128 0x6
+ 1125 02e1 73773200 		.ascii	"sw2\000"
+ 1126 02e5 01       		.byte	0x1
+ 1127 02e6 21       		.byte	0x21
+ 1128 02e7 00000000 		.4byte	.LFB65
+ 1129 02eb 08000000 		.4byte	.LFE65-.LFB65
+ 1130 02ef 01       		.uleb128 0x1
+ 1131 02f0 9C       		.byte	0x9c
+ 1132 02f1 FF020000 		.4byte	0x2ff
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 25
+
+
+ 1133 02f5 07       		.uleb128 0x7
+ 1134 02f6 06000000 		.4byte	.LVL26
+ 1135 02fa 9F010000 		.4byte	0x19f
+ 1136 02fe 00       		.byte	0
+ 1137 02ff 0C       		.uleb128 0xc
+ 1138 0300 B1020000 		.4byte	.LASF27
+ 1139 0304 01       		.byte	0x1
+ 1140 0305 78       		.byte	0x78
+ 1141 0306 00000000 		.4byte	.LFB70
+ 1142 030a B8000000 		.4byte	.LFE70-.LFB70
+ 1143 030e 01       		.uleb128 0x1
+ 1144 030f 9C       		.byte	0x9c
+ 1145 0310 2F040000 		.4byte	0x42f
+ 1146 0314 0D       		.uleb128 0xd
+ 1147 0315 6A00     		.ascii	"j\000"
+ 1148 0317 01       		.byte	0x1
+ 1149 0318 7F       		.byte	0x7f
+ 1150 0319 7E000000 		.4byte	0x7e
+ 1151 031d 3E000000 		.4byte	.LLST2
+ 1152 0321 0E       		.uleb128 0xe
+ 1153 0322 6C010000 		.4byte	.LASF25
+ 1154 0326 01       		.byte	0x1
+ 1155 0327 8F       		.byte	0x8f
+ 1156 0328 CF020000 		.4byte	0x2cf
+ 1157 032c 03       		.uleb128 0x3
+ 1158 032d 91       		.byte	0x91
+ 1159 032e F077     		.sleb128 -1040
+ 1160 0330 0F       		.uleb128 0xf
+ 1161 0331 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 1162 0335 59030000 		.4byte	0x359
+ 1163 0339 0D       		.uleb128 0xd
+ 1164 033a 6900     		.ascii	"i\000"
+ 1165 033c 01       		.byte	0x1
+ 1166 033d 82       		.byte	0x82
+ 1167 033e 7E000000 		.4byte	0x7e
+ 1168 0342 75000000 		.4byte	.LLST3
+ 1169 0346 07       		.uleb128 0x7
+ 1170 0347 32000000 		.4byte	.LVL33
+ 1171 034b 8B070000 		.4byte	0x78b
+ 1172 034f 07       		.uleb128 0x7
+ 1173 0350 4C000000 		.4byte	.LVL35
+ 1174 0354 96070000 		.4byte	0x796
+ 1175 0358 00       		.byte	0
+ 1176 0359 08       		.uleb128 0x8
+ 1177 035a 0E000000 		.4byte	.LVL27
+ 1178 035e 6A070000 		.4byte	0x76a
+ 1179 0362 71030000 		.4byte	0x371
+ 1180 0366 09       		.uleb128 0x9
+ 1181 0367 01       		.uleb128 0x1
+ 1182 0368 50       		.byte	0x50
+ 1183 0369 01       		.uleb128 0x1
+ 1184 036a 30       		.byte	0x30
+ 1185 036b 09       		.uleb128 0x9
+ 1186 036c 01       		.uleb128 0x1
+ 1187 036d 51       		.byte	0x51
+ 1188 036e 01       		.uleb128 0x1
+ 1189 036f 30       		.byte	0x30
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 26
+
+
+ 1190 0370 00       		.byte	0
+ 1191 0371 08       		.uleb128 0x8
+ 1192 0372 14000000 		.4byte	.LVL28
+ 1193 0376 75070000 		.4byte	0x775
+ 1194 037a 88030000 		.4byte	0x388
+ 1195 037e 09       		.uleb128 0x9
+ 1196 037f 01       		.uleb128 0x1
+ 1197 0380 50       		.byte	0x50
+ 1198 0381 05       		.uleb128 0x5
+ 1199 0382 03       		.byte	0x3
+ 1200 0383 18000000 		.4byte	.LC3
+ 1201 0387 00       		.byte	0
+ 1202 0388 08       		.uleb128 0x8
+ 1203 0389 1A000000 		.4byte	.LVL29
+ 1204 038d E3070000 		.4byte	0x7e3
+ 1205 0391 9B030000 		.4byte	0x39b
+ 1206 0395 09       		.uleb128 0x9
+ 1207 0396 01       		.uleb128 0x1
+ 1208 0397 50       		.byte	0x50
+ 1209 0398 01       		.uleb128 0x1
+ 1210 0399 31       		.byte	0x31
+ 1211 039a 00       		.byte	0
+ 1212 039b 08       		.uleb128 0x8
+ 1213 039c 20000000 		.4byte	.LVL30
+ 1214 03a0 EE070000 		.4byte	0x7ee
+ 1215 03a4 AE030000 		.4byte	0x3ae
+ 1216 03a8 09       		.uleb128 0x9
+ 1217 03a9 01       		.uleb128 0x1
+ 1218 03aa 50       		.byte	0x50
+ 1219 03ab 01       		.uleb128 0x1
+ 1220 03ac 31       		.byte	0x31
+ 1221 03ad 00       		.byte	0
+ 1222 03ae 08       		.uleb128 0x8
+ 1223 03af 28000000 		.4byte	.LVL31
+ 1224 03b3 F9070000 		.4byte	0x7f9
+ 1225 03b7 C3030000 		.4byte	0x3c3
+ 1226 03bb 09       		.uleb128 0x9
+ 1227 03bc 01       		.uleb128 0x1
+ 1228 03bd 50       		.byte	0x50
+ 1229 03be 03       		.uleb128 0x3
+ 1230 03bf 0A       		.byte	0xa
+ 1231 03c0 3408     		.2byte	0x834
+ 1232 03c2 00       		.byte	0
+ 1233 03c3 08       		.uleb128 0x8
+ 1234 03c4 64000000 		.4byte	.LVL39
+ 1235 03c8 F9070000 		.4byte	0x7f9
+ 1236 03cc D8030000 		.4byte	0x3d8
+ 1237 03d0 09       		.uleb128 0x9
+ 1238 03d1 01       		.uleb128 0x1
+ 1239 03d2 50       		.byte	0x50
+ 1240 03d3 03       		.uleb128 0x3
+ 1241 03d4 0A       		.byte	0xa
+ 1242 03d5 280A     		.2byte	0xa28
+ 1243 03d7 00       		.byte	0
+ 1244 03d8 08       		.uleb128 0x8
+ 1245 03d9 6A000000 		.4byte	.LVL40
+ 1246 03dd E3070000 		.4byte	0x7e3
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 27
+
+
+ 1247 03e1 EB030000 		.4byte	0x3eb
+ 1248 03e5 09       		.uleb128 0x9
+ 1249 03e6 01       		.uleb128 0x1
+ 1250 03e7 50       		.byte	0x50
+ 1251 03e8 01       		.uleb128 0x1
+ 1252 03e9 30       		.byte	0x30
+ 1253 03ea 00       		.byte	0
+ 1254 03eb 08       		.uleb128 0x8
+ 1255 03ec 70000000 		.4byte	.LVL41
+ 1256 03f0 EE070000 		.4byte	0x7ee
+ 1257 03f4 FE030000 		.4byte	0x3fe
+ 1258 03f8 09       		.uleb128 0x9
+ 1259 03f9 01       		.uleb128 0x1
+ 1260 03fa 50       		.byte	0x50
+ 1261 03fb 01       		.uleb128 0x1
+ 1262 03fc 30       		.byte	0x30
+ 1263 03fd 00       		.byte	0
+ 1264 03fe 08       		.uleb128 0x8
+ 1265 03ff 88000000 		.4byte	.LVL42
+ 1266 0403 C2070000 		.4byte	0x7c2
+ 1267 0407 12040000 		.4byte	0x412
+ 1268 040b 09       		.uleb128 0x9
+ 1269 040c 01       		.uleb128 0x1
+ 1270 040d 50       		.byte	0x50
+ 1271 040e 02       		.uleb128 0x2
+ 1272 040f 7D       		.byte	0x7d
+ 1273 0410 00       		.sleb128 0
+ 1274 0411 00       		.byte	0
+ 1275 0412 07       		.uleb128 0x7
+ 1276 0413 92000000 		.4byte	.LVL43
+ 1277 0417 CD070000 		.4byte	0x7cd
+ 1278 041b 0A       		.uleb128 0xa
+ 1279 041c 98000000 		.4byte	.LVL44
+ 1280 0420 D8070000 		.4byte	0x7d8
+ 1281 0424 09       		.uleb128 0x9
+ 1282 0425 01       		.uleb128 0x1
+ 1283 0426 50       		.byte	0x50
+ 1284 0427 05       		.uleb128 0x5
+ 1285 0428 03       		.byte	0x3
+ 1286 0429 00000000 		.4byte	MY_ISR
+ 1287 042d 00       		.byte	0
+ 1288 042e 00       		.byte	0
+ 1289 042f 06       		.uleb128 0x6
+ 1290 0430 73773100 		.ascii	"sw1\000"
+ 1291 0434 01       		.byte	0x1
+ 1292 0435 1E       		.byte	0x1e
+ 1293 0436 00000000 		.4byte	.LFB64
+ 1294 043a 08000000 		.4byte	.LFE64-.LFB64
+ 1295 043e 01       		.uleb128 0x1
+ 1296 043f 9C       		.byte	0x9c
+ 1297 0440 4E040000 		.4byte	0x44e
+ 1298 0444 07       		.uleb128 0x7
+ 1299 0445 06000000 		.4byte	.LVL46
+ 1300 0449 FF020000 		.4byte	0x2ff
+ 1301 044d 00       		.byte	0
+ 1302 044e 0B       		.uleb128 0xb
+ 1303 044f 99000000 		.4byte	.LASF28
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 28
+
+
+ 1304 0453 01       		.byte	0x1
+ 1305 0454 24       		.byte	0x24
+ 1306 0455 00000000 		.4byte	.LFB66
+ 1307 0459 34000000 		.4byte	.LFE66-.LFB66
+ 1308 045d 01       		.uleb128 0x1
+ 1309 045e 9C       		.byte	0x9c
+ 1310 045f B4040000 		.4byte	0x4b4
+ 1311 0463 12       		.uleb128 0x12
+ 1312 0464 AA020000 		.4byte	.LASF29
+ 1313 0468 01       		.byte	0x1
+ 1314 0469 26       		.byte	0x26
+ 1315 046a 8C000000 		.4byte	0x8c
+ 1316 046e 94000000 		.4byte	.LLST4
+ 1317 0472 13       		.uleb128 0x13
+ 1318 0473 10000000 		.4byte	.LBB6
+ 1319 0477 1E000000 		.4byte	.LBE6-.LBB6
+ 1320 047b AA040000 		.4byte	0x4aa
+ 1321 047f 12       		.uleb128 0x12
+ 1322 0480 63010000 		.4byte	.LASF30
+ 1323 0484 01       		.byte	0x1
+ 1324 0485 35       		.byte	0x35
+ 1325 0486 AD000000 		.4byte	0xad
+ 1326 048a A7000000 		.4byte	.LLST5
+ 1327 048e 07       		.uleb128 0x7
+ 1328 048f 14000000 		.4byte	.LVL49
+ 1329 0493 04080000 		.4byte	0x804
+ 1330 0497 07       		.uleb128 0x7
+ 1331 0498 20000000 		.4byte	.LVL50
+ 1332 049c FF020000 		.4byte	0x2ff
+ 1333 04a0 07       		.uleb128 0x7
+ 1334 04a1 2E000000 		.4byte	.LVL52
+ 1335 04a5 9F010000 		.4byte	0x19f
+ 1336 04a9 00       		.byte	0
+ 1337 04aa 07       		.uleb128 0x7
+ 1338 04ab 06000000 		.4byte	.LVL47
+ 1339 04af 0F080000 		.4byte	0x80f
+ 1340 04b3 00       		.byte	0
+ 1341 04b4 14       		.uleb128 0x14
+ 1342 04b5 94000000 		.4byte	.LASF83
+ 1343 04b9 01       		.byte	0x1
+ 1344 04ba 9C       		.byte	0x9c
+ 1345 04bb 7E000000 		.4byte	0x7e
+ 1346 04bf 00000000 		.4byte	.LFB71
+ 1347 04c3 1C010000 		.4byte	.LFE71-.LFB71
+ 1348 04c7 01       		.uleb128 0x1
+ 1349 04c8 9C       		.byte	0x9c
+ 1350 04c9 C4060000 		.4byte	0x6c4
+ 1351 04cd 15       		.uleb128 0x15
+ 1352 04ce 6B657900 		.ascii	"key\000"
+ 1353 04d2 01       		.byte	0x1
+ 1354 04d3 B7       		.byte	0xb7
+ 1355 04d4 EB000000 		.4byte	0xeb
+ 1356 04d8 01       		.uleb128 0x1
+ 1357 04d9 54       		.byte	0x54
+ 1358 04da 13       		.uleb128 0x13
+ 1359 04db 58000000 		.4byte	.LBB7
+ 1360 04df 44000000 		.4byte	.LBE7-.LBB7
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 29
+
+
+ 1361 04e3 FE040000 		.4byte	0x4fe
+ 1362 04e7 0D       		.uleb128 0xd
+ 1363 04e8 6900     		.ascii	"i\000"
+ 1364 04ea 01       		.byte	0x1
+ 1365 04eb BA       		.byte	0xba
+ 1366 04ec 7E000000 		.4byte	0x7e
+ 1367 04f0 C5000000 		.4byte	.LLST6
+ 1368 04f4 07       		.uleb128 0x7
+ 1369 04f5 7C000000 		.4byte	.LVL74
+ 1370 04f9 1A080000 		.4byte	0x81a
+ 1371 04fd 00       		.byte	0
+ 1372 04fe 13       		.uleb128 0x13
+ 1373 04ff 9C000000 		.4byte	.LBB8
+ 1374 0503 80000000 		.4byte	.LBE8-.LBB8
+ 1375 0507 D1050000 		.4byte	0x5d1
+ 1376 050b 12       		.uleb128 0x12
+ 1377 050c 52000000 		.4byte	.LASF31
+ 1378 0510 01       		.byte	0x1
+ 1379 0511 C2       		.byte	0xc2
+ 1380 0512 D1000000 		.4byte	0xd1
+ 1381 0516 E4000000 		.4byte	.LLST7
+ 1382 051a 0E       		.uleb128 0xe
+ 1383 051b 18030000 		.4byte	.LASF32
+ 1384 051f 01       		.byte	0x1
+ 1385 0520 C3       		.byte	0xc3
+ 1386 0521 C5000000 		.4byte	0xc5
+ 1387 0525 01       		.uleb128 0x1
+ 1388 0526 55       		.byte	0x55
+ 1389 0527 12       		.uleb128 0x12
+ 1390 0528 5B000000 		.4byte	.LASF33
+ 1391 052c 01       		.byte	0x1
+ 1392 052d C8       		.byte	0xc8
+ 1393 052e D1000000 		.4byte	0xd1
+ 1394 0532 F7000000 		.4byte	.LLST8
+ 1395 0536 12       		.uleb128 0x12
+ 1396 0537 D6010000 		.4byte	.LASF34
+ 1397 053b 01       		.byte	0x1
+ 1398 053c C9       		.byte	0xc9
+ 1399 053d C5000000 		.4byte	0xc5
+ 1400 0541 0A010000 		.4byte	.LLST9
+ 1401 0545 07       		.uleb128 0x7
+ 1402 0546 A0000000 		.4byte	.LVL79
+ 1403 054a 25080000 		.4byte	0x825
+ 1404 054e 08       		.uleb128 0x8
+ 1405 054f A8000000 		.4byte	.LVL81
+ 1406 0553 30080000 		.4byte	0x830
+ 1407 0557 61050000 		.4byte	0x561
+ 1408 055b 09       		.uleb128 0x9
+ 1409 055c 01       		.uleb128 0x1
+ 1410 055d 50       		.byte	0x50
+ 1411 055e 01       		.uleb128 0x1
+ 1412 055f 30       		.byte	0x30
+ 1413 0560 00       		.byte	0
+ 1414 0561 08       		.uleb128 0x8
+ 1415 0562 AE000000 		.4byte	.LVL82
+ 1416 0566 3B080000 		.4byte	0x83b
+ 1417 056a 74050000 		.4byte	0x574
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 30
+
+
+ 1418 056e 09       		.uleb128 0x9
+ 1419 056f 01       		.uleb128 0x1
+ 1420 0570 50       		.byte	0x50
+ 1421 0571 01       		.uleb128 0x1
+ 1422 0572 30       		.byte	0x30
+ 1423 0573 00       		.byte	0
+ 1424 0574 07       		.uleb128 0x7
+ 1425 0575 B2000000 		.4byte	.LVL83
+ 1426 0579 46080000 		.4byte	0x846
+ 1427 057d 07       		.uleb128 0x7
+ 1428 057e B6000000 		.4byte	.LVL84
+ 1429 0582 51080000 		.4byte	0x851
+ 1430 0586 08       		.uleb128 0x8
+ 1431 0587 BE000000 		.4byte	.LVL86
+ 1432 058b 5C080000 		.4byte	0x85c
+ 1433 058f 99050000 		.4byte	0x599
+ 1434 0593 09       		.uleb128 0x9
+ 1435 0594 01       		.uleb128 0x1
+ 1436 0595 50       		.byte	0x50
+ 1437 0596 01       		.uleb128 0x1
+ 1438 0597 3A       		.byte	0x3a
+ 1439 0598 00       		.byte	0
+ 1440 0599 08       		.uleb128 0x8
+ 1441 059a C4000000 		.4byte	.LVL87
+ 1442 059e 3B080000 		.4byte	0x83b
+ 1443 05a2 AC050000 		.4byte	0x5ac
+ 1444 05a6 09       		.uleb128 0x9
+ 1445 05a7 01       		.uleb128 0x1
+ 1446 05a8 50       		.byte	0x50
+ 1447 05a9 01       		.uleb128 0x1
+ 1448 05aa 31       		.byte	0x31
+ 1449 05ab 00       		.byte	0
+ 1450 05ac 07       		.uleb128 0x7
+ 1451 05ad C8000000 		.4byte	.LVL88
+ 1452 05b1 46080000 		.4byte	0x846
+ 1453 05b5 07       		.uleb128 0x7
+ 1454 05b6 CC000000 		.4byte	.LVL89
+ 1455 05ba 51080000 		.4byte	0x851
+ 1456 05be 07       		.uleb128 0x7
+ 1457 05bf DA000000 		.4byte	.LVL90
+ 1458 05c3 FF020000 		.4byte	0x2ff
+ 1459 05c7 07       		.uleb128 0x7
+ 1460 05c8 EC000000 		.4byte	.LVL92
+ 1461 05cc 9F010000 		.4byte	0x19f
+ 1462 05d0 00       		.byte	0
+ 1463 05d1 08       		.uleb128 0x8
+ 1464 05d2 0A000000 		.4byte	.LVL53
+ 1465 05d6 67080000 		.4byte	0x867
+ 1466 05da E8050000 		.4byte	0x5e8
+ 1467 05de 09       		.uleb128 0x9
+ 1468 05df 01       		.uleb128 0x1
+ 1469 05e0 50       		.byte	0x50
+ 1470 05e1 05       		.uleb128 0x5
+ 1471 05e2 03       		.byte	0x3
+ 1472 05e3 00000000 		.4byte	sw3
+ 1473 05e7 00       		.byte	0
+ 1474 05e8 08       		.uleb128 0x8
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 31
+
+
+ 1475 05e9 10000000 		.4byte	.LVL54
+ 1476 05ed 72080000 		.4byte	0x872
+ 1477 05f1 FF050000 		.4byte	0x5ff
+ 1478 05f5 09       		.uleb128 0x9
+ 1479 05f6 01       		.uleb128 0x1
+ 1480 05f7 50       		.byte	0x50
+ 1481 05f8 05       		.uleb128 0x5
+ 1482 05f9 03       		.byte	0x3
+ 1483 05fa 00000000 		.4byte	sw2
+ 1484 05fe 00       		.byte	0
+ 1485 05ff 08       		.uleb128 0x8
+ 1486 0600 16000000 		.4byte	.LVL55
+ 1487 0604 7D080000 		.4byte	0x87d
+ 1488 0608 16060000 		.4byte	0x616
+ 1489 060c 09       		.uleb128 0x9
+ 1490 060d 01       		.uleb128 0x1
+ 1491 060e 50       		.byte	0x50
+ 1492 060f 05       		.uleb128 0x5
+ 1493 0610 03       		.byte	0x3
+ 1494 0611 00000000 		.4byte	sw1
+ 1495 0615 00       		.byte	0
+ 1496 0616 08       		.uleb128 0x8
+ 1497 0617 1C000000 		.4byte	.LVL56
+ 1498 061b 88080000 		.4byte	0x888
+ 1499 061f 2D060000 		.4byte	0x62d
+ 1500 0623 09       		.uleb128 0x9
+ 1501 0624 01       		.uleb128 0x1
+ 1502 0625 50       		.byte	0x50
+ 1503 0626 05       		.uleb128 0x5
+ 1504 0627 03       		.byte	0x3
+ 1505 0628 00000000 		.4byte	InterruptionRX
+ 1506 062c 00       		.byte	0
+ 1507 062d 07       		.uleb128 0x7
+ 1508 062e 20000000 		.4byte	.LVL57
+ 1509 0632 93080000 		.4byte	0x893
+ 1510 0636 07       		.uleb128 0x7
+ 1511 0637 24000000 		.4byte	.LVL58
+ 1512 063b 9E080000 		.4byte	0x89e
+ 1513 063f 07       		.uleb128 0x7
+ 1514 0640 28000000 		.4byte	.LVL59
+ 1515 0644 A9080000 		.4byte	0x8a9
+ 1516 0648 08       		.uleb128 0x8
+ 1517 0649 2E000000 		.4byte	.LVL60
+ 1518 064d 5F070000 		.4byte	0x75f
+ 1519 0651 5B060000 		.4byte	0x65b
+ 1520 0655 09       		.uleb128 0x9
+ 1521 0656 01       		.uleb128 0x1
+ 1522 0657 50       		.byte	0x50
+ 1523 0658 01       		.uleb128 0x1
+ 1524 0659 31       		.byte	0x31
+ 1525 065a 00       		.byte	0
+ 1526 065b 07       		.uleb128 0x7
+ 1527 065c 32000000 		.4byte	.LVL61
+ 1528 0660 B4080000 		.4byte	0x8b4
+ 1529 0664 07       		.uleb128 0x7
+ 1530 0665 36000000 		.4byte	.LVL62
+ 1531 0669 BF080000 		.4byte	0x8bf
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 32
+
+
+ 1532 066d 07       		.uleb128 0x7
+ 1533 066e 3A000000 		.4byte	.LVL63
+ 1534 0672 CA080000 		.4byte	0x8ca
+ 1535 0676 07       		.uleb128 0x7
+ 1536 0677 3E000000 		.4byte	.LVL64
+ 1537 067b D5080000 		.4byte	0x8d5
+ 1538 067f 07       		.uleb128 0x7
+ 1539 0680 42000000 		.4byte	.LVL65
+ 1540 0684 E0080000 		.4byte	0x8e0
+ 1541 0688 07       		.uleb128 0x7
+ 1542 0689 46000000 		.4byte	.LVL66
+ 1543 068d EB080000 		.4byte	0x8eb
+ 1544 0691 07       		.uleb128 0x7
+ 1545 0692 4A000000 		.4byte	.LVL67
+ 1546 0696 A9080000 		.4byte	0x8a9
+ 1547 069a 08       		.uleb128 0x8
+ 1548 069b 50000000 		.4byte	.LVL68
+ 1549 069f 75070000 		.4byte	0x775
+ 1550 06a3 B1060000 		.4byte	0x6b1
+ 1551 06a7 09       		.uleb128 0x9
+ 1552 06a8 01       		.uleb128 0x1
+ 1553 06a9 50       		.byte	0x50
+ 1554 06aa 05       		.uleb128 0x5
+ 1555 06ab 03       		.byte	0x3
+ 1556 06ac 00000000 		.4byte	.LC0
+ 1557 06b0 00       		.byte	0
+ 1558 06b1 07       		.uleb128 0x7
+ 1559 06b2 54000000 		.4byte	.LVL69
+ 1560 06b6 F6080000 		.4byte	0x8f6
+ 1561 06ba 07       		.uleb128 0x7
+ 1562 06bb 58000000 		.4byte	.LVL70
+ 1563 06bf 01090000 		.4byte	0x901
+ 1564 06c3 00       		.byte	0
+ 1565 06c4 16       		.uleb128 0x16
+ 1566 06c5 F6030000 		.4byte	.LASF35
+ 1567 06c9 05       		.byte	0x5
+ 1568 06ca 1207     		.2byte	0x712
+ 1569 06cc D0060000 		.4byte	0x6d0
+ 1570 06d0 17       		.uleb128 0x17
+ 1571 06d1 A2000000 		.4byte	0xa2
+ 1572 06d5 18       		.uleb128 0x18
+ 1573 06d6 6A6D7000 		.ascii	"jmp\000"
+ 1574 06da 01       		.byte	0x1
+ 1575 06db 12       		.byte	0x12
+ 1576 06dc DD000000 		.4byte	0xdd
+ 1577 06e0 05       		.uleb128 0x5
+ 1578 06e1 03       		.byte	0x3
+ 1579 06e2 00000000 		.4byte	jmp
+ 1580 06e6 18       		.uleb128 0x18
+ 1581 06e7 6900     		.ascii	"i\000"
+ 1582 06e9 01       		.byte	0x1
+ 1583 06ea 13       		.byte	0x13
+ 1584 06eb 97000000 		.4byte	0x97
+ 1585 06ef 05       		.uleb128 0x5
+ 1586 06f0 03       		.byte	0x3
+ 1587 06f1 00000000 		.4byte	i
+ 1588 06f5 19       		.uleb128 0x19
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 33
+
+
+ 1589 06f6 D3000000 		.4byte	.LASF36
+ 1590 06fa 01       		.byte	0x1
+ 1591 06fb 14       		.byte	0x14
+ 1592 06fc 8C000000 		.4byte	0x8c
+ 1593 0700 05       		.uleb128 0x5
+ 1594 0701 03       		.byte	0x3
+ 1595 0702 00000000 		.4byte	value
+ 1596 0706 19       		.uleb128 0x19
+ 1597 0707 00030000 		.4byte	.LASF37
+ 1598 070b 01       		.byte	0x1
+ 1599 070c 15       		.byte	0x15
+ 1600 070d B9000000 		.4byte	0xb9
+ 1601 0711 05       		.uleb128 0x5
+ 1602 0712 03       		.byte	0x3
+ 1603 0713 00000000 		.4byte	ms_count
+ 1604 0717 19       		.uleb128 0x19
+ 1605 0718 3A020000 		.4byte	.LASF38
+ 1606 071c 01       		.byte	0x1
+ 1607 071d 16       		.byte	0x16
+ 1608 071e 7E000000 		.4byte	0x7e
+ 1609 0722 05       		.uleb128 0x5
+ 1610 0723 03       		.byte	0x3
+ 1611 0724 00000000 		.4byte	score
+ 1612 0728 10       		.uleb128 0x10
+ 1613 0729 E4000000 		.4byte	0xe4
+ 1614 072d 38070000 		.4byte	0x738
+ 1615 0731 1A       		.uleb128 0x1a
+ 1616 0732 F9000000 		.4byte	0xf9
+ 1617 0736 63       		.byte	0x63
+ 1618 0737 00       		.byte	0
+ 1619 0738 19       		.uleb128 0x19
+ 1620 0739 26030000 		.4byte	.LASF39
+ 1621 073d 01       		.byte	0x1
+ 1622 073e 19       		.byte	0x19
+ 1623 073f 28070000 		.4byte	0x728
+ 1624 0743 05       		.uleb128 0x5
+ 1625 0744 03       		.byte	0x3
+ 1626 0745 00000000 		.4byte	wave
+ 1627 0749 1B       		.uleb128 0x1b
+ 1628 074a DE010000 		.4byte	.LASF40
+ 1629 074e DE010000 		.4byte	.LASF40
+ 1630 0752 06       		.byte	0x6
+ 1631 0753 29       		.byte	0x29
+ 1632 0754 1B       		.uleb128 0x1b
+ 1633 0755 83010000 		.4byte	.LASF41
+ 1634 0759 83010000 		.4byte	.LASF41
+ 1635 075d 07       		.byte	0x7
+ 1636 075e 5B       		.byte	0x5b
+ 1637 075f 1B       		.uleb128 0x1b
+ 1638 0760 19000000 		.4byte	.LASF42
+ 1639 0764 19000000 		.4byte	.LASF42
+ 1640 0768 08       		.byte	0x8
+ 1641 0769 3A       		.byte	0x3a
+ 1642 076a 1B       		.uleb128 0x1b
+ 1643 076b 1C020000 		.4byte	.LASF43
+ 1644 076f 1C020000 		.4byte	.LASF43
+ 1645 0773 08       		.byte	0x8
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 34
+
+
+ 1646 0774 3D       		.byte	0x3d
+ 1647 0775 1B       		.uleb128 0x1b
+ 1648 0776 2B030000 		.4byte	.LASF44
+ 1649 077a 2B030000 		.4byte	.LASF44
+ 1650 077e 08       		.byte	0x8
+ 1651 077f 3C       		.byte	0x3c
+ 1652 0780 1B       		.uleb128 0x1b
+ 1653 0781 2F000000 		.4byte	.LASF45
+ 1654 0785 2F000000 		.4byte	.LASF45
+ 1655 0789 08       		.byte	0x8
+ 1656 078a 61       		.byte	0x61
+ 1657 078b 1B       		.uleb128 0x1b
+ 1658 078c B7010000 		.4byte	.LASF46
+ 1659 0790 B7010000 		.4byte	.LASF46
+ 1660 0794 09       		.byte	0x9
+ 1661 0795 5E       		.byte	0x5e
+ 1662 0796 1B       		.uleb128 0x1b
+ 1663 0797 0B000000 		.4byte	.LASF47
+ 1664 079b 0B000000 		.4byte	.LASF47
+ 1665 079f 0A       		.byte	0xa
+ 1666 07a0 37       		.byte	0x37
+ 1667 07a1 1B       		.uleb128 0x1b
+ 1668 07a2 8E010000 		.4byte	.LASF48
+ 1669 07a6 8E010000 		.4byte	.LASF48
+ 1670 07aa 0B       		.byte	0xb
+ 1671 07ab 26       		.byte	0x26
+ 1672 07ac 1B       		.uleb128 0x1b
+ 1673 07ad 99040000 		.4byte	.LASF49
+ 1674 07b1 99040000 		.4byte	.LASF49
+ 1675 07b5 0C       		.byte	0xc
+ 1676 07b6 26       		.byte	0x26
+ 1677 07b7 1B       		.uleb128 0x1b
+ 1678 07b8 68030000 		.4byte	.LASF50
+ 1679 07bc 68030000 		.4byte	.LASF50
+ 1680 07c0 0D       		.byte	0xd
+ 1681 07c1 C3       		.byte	0xc3
+ 1682 07c2 1B       		.uleb128 0x1b
+ 1683 07c3 D9000000 		.4byte	.LASF51
+ 1684 07c7 D9000000 		.4byte	.LASF51
+ 1685 07cb 0E       		.byte	0xe
+ 1686 07cc 8B       		.byte	0x8b
+ 1687 07cd 1B       		.uleb128 0x1b
+ 1688 07ce AD030000 		.4byte	.LASF52
+ 1689 07d2 AD030000 		.4byte	.LASF52
+ 1690 07d6 07       		.byte	0x7
+ 1691 07d7 5A       		.byte	0x5a
+ 1692 07d8 1B       		.uleb128 0x1b
+ 1693 07d9 99010000 		.4byte	.LASF53
+ 1694 07dd 99010000 		.4byte	.LASF53
+ 1695 07e1 0F       		.byte	0xf
+ 1696 07e2 18       		.byte	0x18
+ 1697 07e3 1B       		.uleb128 0x1b
+ 1698 07e4 19010000 		.4byte	.LASF54
+ 1699 07e8 19010000 		.4byte	.LASF54
+ 1700 07ec 10       		.byte	0x10
+ 1701 07ed 26       		.byte	0x26
+ 1702 07ee 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 35
+
+
+ 1703 07ef D5030000 		.4byte	.LASF55
+ 1704 07f3 D5030000 		.4byte	.LASF55
+ 1705 07f7 11       		.byte	0x11
+ 1706 07f8 26       		.byte	0x26
+ 1707 07f9 1B       		.uleb128 0x1b
+ 1708 07fa C3030000 		.4byte	.LASF56
+ 1709 07fe C3030000 		.4byte	.LASF56
+ 1710 0802 12       		.byte	0x12
+ 1711 0803 C3       		.byte	0xc3
+ 1712 0804 1B       		.uleb128 0x1b
+ 1713 0805 0C020000 		.4byte	.LASF57
+ 1714 0809 0C020000 		.4byte	.LASF57
+ 1715 080d 0E       		.byte	0xe
+ 1716 080e 6F       		.byte	0x6f
+ 1717 080f 1B       		.uleb128 0x1b
+ 1718 0810 82000000 		.4byte	.LASF58
+ 1719 0814 82000000 		.4byte	.LASF58
+ 1720 0818 0E       		.byte	0xe
+ 1721 0819 70       		.byte	0x70
+ 1722 081a 1C       		.uleb128 0x1c
+ 1723 081b 73696E00 		.ascii	"sin\000"
+ 1724 081f 73696E00 		.ascii	"sin\000"
+ 1725 0823 1B       		.byte	0x1b
+ 1726 0824 6F       		.byte	0x6f
+ 1727 0825 1B       		.uleb128 0x1b
+ 1728 0826 F3010000 		.4byte	.LASF59
+ 1729 082a F3010000 		.4byte	.LASF59
+ 1730 082e 13       		.byte	0x13
+ 1731 082f 0F       		.byte	0xf
+ 1732 0830 1B       		.uleb128 0x1b
+ 1733 0831 BF000000 		.4byte	.LASF60
+ 1734 0835 BF000000 		.4byte	.LASF60
+ 1735 0839 14       		.byte	0x14
+ 1736 083a 3F       		.byte	0x3f
+ 1737 083b 1B       		.uleb128 0x1b
+ 1738 083c A8000000 		.4byte	.LASF61
+ 1739 0840 A8000000 		.4byte	.LASF61
+ 1740 0844 15       		.byte	0x15
+ 1741 0845 57       		.byte	0x57
+ 1742 0846 1B       		.uleb128 0x1b
+ 1743 0847 57020000 		.4byte	.LASF62
+ 1744 084b 57020000 		.4byte	.LASF62
+ 1745 084f 14       		.byte	0x14
+ 1746 0850 42       		.byte	0x42
+ 1747 0851 1B       		.uleb128 0x1b
+ 1748 0852 99030000 		.4byte	.LASF63
+ 1749 0856 99030000 		.4byte	.LASF63
+ 1750 085a 14       		.byte	0x14
+ 1751 085b 47       		.byte	0x47
+ 1752 085c 1B       		.uleb128 0x1b
+ 1753 085d 91040000 		.4byte	.LASF64
+ 1754 0861 91040000 		.4byte	.LASF64
+ 1755 0865 16       		.byte	0x16
+ 1756 0866 76       		.byte	0x76
+ 1757 0867 1B       		.uleb128 0x1b
+ 1758 0868 A7010000 		.4byte	.LASF65
+ 1759 086c A7010000 		.4byte	.LASF65
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 36
+
+
+ 1760 0870 17       		.byte	0x17
+ 1761 0871 18       		.byte	0x18
+ 1762 0872 1B       		.uleb128 0x1b
+ 1763 0873 73010000 		.4byte	.LASF66
+ 1764 0877 73010000 		.4byte	.LASF66
+ 1765 087b 18       		.byte	0x18
+ 1766 087c 18       		.byte	0x18
+ 1767 087d 1B       		.uleb128 0x1b
+ 1768 087e 40010000 		.4byte	.LASF67
+ 1769 0882 40010000 		.4byte	.LASF67
+ 1770 0886 19       		.byte	0x19
+ 1771 0887 18       		.byte	0x18
+ 1772 0888 1B       		.uleb128 0x1b
+ 1773 0889 40030000 		.4byte	.LASF68
+ 1774 088d 40030000 		.4byte	.LASF68
+ 1775 0891 1A       		.byte	0x1a
+ 1776 0892 18       		.byte	0x18
+ 1777 0893 1B       		.uleb128 0x1b
+ 1778 0894 50010000 		.4byte	.LASF69
+ 1779 0898 50010000 		.4byte	.LASF69
+ 1780 089c 14       		.byte	0x14
+ 1781 089d 3A       		.byte	0x3a
+ 1782 089e 1B       		.uleb128 0x1b
+ 1783 089f 08010000 		.4byte	.LASF70
+ 1784 08a3 08010000 		.4byte	.LASF70
+ 1785 08a7 15       		.byte	0x15
+ 1786 08a8 25       		.byte	0x25
+ 1787 08a9 1B       		.uleb128 0x1b
+ 1788 08aa 88020000 		.4byte	.LASF71
+ 1789 08ae 88020000 		.4byte	.LASF71
+ 1790 08b2 08       		.byte	0x8
+ 1791 08b3 38       		.byte	0x38
+ 1792 08b4 1B       		.uleb128 0x1b
+ 1793 08b5 4F030000 		.4byte	.LASF72
+ 1794 08b9 4F030000 		.4byte	.LASF72
+ 1795 08bd 09       		.byte	0x9
+ 1796 08be 5A       		.byte	0x5a
+ 1797 08bf 1B       		.uleb128 0x1b
+ 1798 08c0 64000000 		.4byte	.LASF73
+ 1799 08c4 64000000 		.4byte	.LASF73
+ 1800 08c8 0A       		.byte	0xa
+ 1801 08c9 33       		.byte	0x33
+ 1802 08ca 1B       		.uleb128 0x1b
+ 1803 08cb F7000000 		.4byte	.LASF74
+ 1804 08cf F7000000 		.4byte	.LASF74
+ 1805 08d3 0E       		.byte	0xe
+ 1806 08d4 54       		.byte	0x54
+ 1807 08d5 1B       		.uleb128 0x1b
+ 1808 08d6 47000000 		.4byte	.LASF75
+ 1809 08da 47000000 		.4byte	.LASF75
+ 1810 08de 12       		.byte	0x12
+ 1811 08df 92       		.byte	0x92
+ 1812 08e0 1B       		.uleb128 0x1b
+ 1813 08e1 00000000 		.4byte	.LASF76
+ 1814 08e5 00000000 		.4byte	.LASF76
+ 1815 08e9 0D       		.byte	0xd
+ 1816 08ea 92       		.byte	0x92
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 37
+
+
+ 1817 08eb 1B       		.uleb128 0x1b
+ 1818 08ec 24010000 		.4byte	.LASF77
+ 1819 08f0 24010000 		.4byte	.LASF77
+ 1820 08f4 08       		.byte	0x8
+ 1821 08f5 36       		.byte	0x36
+ 1822 08f6 1B       		.uleb128 0x1b
+ 1823 08f7 7D020000 		.4byte	.LASF78
+ 1824 08fb 7D020000 		.4byte	.LASF78
+ 1825 08ff 13       		.byte	0x13
+ 1826 0900 0E       		.byte	0xe
+ 1827 0901 1B       		.uleb128 0x1b
+ 1828 0902 E0030000 		.4byte	.LASF79
+ 1829 0906 E0030000 		.4byte	.LASF79
+ 1830 090a 14       		.byte	0x14
+ 1831 090b 3D       		.byte	0x3d
+ 1832 090c 00       		.byte	0
+ 1833              		.section	.debug_abbrev,"",%progbits
+ 1834              	.Ldebug_abbrev0:
+ 1835 0000 01       		.uleb128 0x1
+ 1836 0001 11       		.uleb128 0x11
+ 1837 0002 01       		.byte	0x1
+ 1838 0003 25       		.uleb128 0x25
+ 1839 0004 0E       		.uleb128 0xe
+ 1840 0005 13       		.uleb128 0x13
+ 1841 0006 0B       		.uleb128 0xb
+ 1842 0007 03       		.uleb128 0x3
+ 1843 0008 0E       		.uleb128 0xe
+ 1844 0009 1B       		.uleb128 0x1b
+ 1845 000a 0E       		.uleb128 0xe
+ 1846 000b 55       		.uleb128 0x55
+ 1847 000c 17       		.uleb128 0x17
+ 1848 000d 11       		.uleb128 0x11
+ 1849 000e 01       		.uleb128 0x1
+ 1850 000f 10       		.uleb128 0x10
+ 1851 0010 17       		.uleb128 0x17
+ 1852 0011 00       		.byte	0
+ 1853 0012 00       		.byte	0
+ 1854 0013 02       		.uleb128 0x2
+ 1855 0014 24       		.uleb128 0x24
+ 1856 0015 00       		.byte	0
+ 1857 0016 0B       		.uleb128 0xb
+ 1858 0017 0B       		.uleb128 0xb
+ 1859 0018 3E       		.uleb128 0x3e
+ 1860 0019 0B       		.uleb128 0xb
+ 1861 001a 03       		.uleb128 0x3
+ 1862 001b 0E       		.uleb128 0xe
+ 1863 001c 00       		.byte	0
+ 1864 001d 00       		.byte	0
+ 1865 001e 03       		.uleb128 0x3
+ 1866 001f 16       		.uleb128 0x16
+ 1867 0020 00       		.byte	0
+ 1868 0021 03       		.uleb128 0x3
+ 1869 0022 0E       		.uleb128 0xe
+ 1870 0023 3A       		.uleb128 0x3a
+ 1871 0024 0B       		.uleb128 0xb
+ 1872 0025 3B       		.uleb128 0x3b
+ 1873 0026 0B       		.uleb128 0xb
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 38
+
+
+ 1874 0027 49       		.uleb128 0x49
+ 1875 0028 13       		.uleb128 0x13
+ 1876 0029 00       		.byte	0
+ 1877 002a 00       		.byte	0
+ 1878 002b 04       		.uleb128 0x4
+ 1879 002c 24       		.uleb128 0x24
+ 1880 002d 00       		.byte	0
+ 1881 002e 0B       		.uleb128 0xb
+ 1882 002f 0B       		.uleb128 0xb
+ 1883 0030 3E       		.uleb128 0x3e
+ 1884 0031 0B       		.uleb128 0xb
+ 1885 0032 03       		.uleb128 0x3
+ 1886 0033 08       		.uleb128 0x8
+ 1887 0034 00       		.byte	0
+ 1888 0035 00       		.byte	0
+ 1889 0036 05       		.uleb128 0x5
+ 1890 0037 16       		.uleb128 0x16
+ 1891 0038 00       		.byte	0
+ 1892 0039 03       		.uleb128 0x3
+ 1893 003a 0E       		.uleb128 0xe
+ 1894 003b 3A       		.uleb128 0x3a
+ 1895 003c 0B       		.uleb128 0xb
+ 1896 003d 3B       		.uleb128 0x3b
+ 1897 003e 05       		.uleb128 0x5
+ 1898 003f 49       		.uleb128 0x49
+ 1899 0040 13       		.uleb128 0x13
+ 1900 0041 00       		.byte	0
+ 1901 0042 00       		.byte	0
+ 1902 0043 06       		.uleb128 0x6
+ 1903 0044 2E       		.uleb128 0x2e
+ 1904 0045 01       		.byte	0x1
+ 1905 0046 3F       		.uleb128 0x3f
+ 1906 0047 19       		.uleb128 0x19
+ 1907 0048 03       		.uleb128 0x3
+ 1908 0049 08       		.uleb128 0x8
+ 1909 004a 3A       		.uleb128 0x3a
+ 1910 004b 0B       		.uleb128 0xb
+ 1911 004c 3B       		.uleb128 0x3b
+ 1912 004d 0B       		.uleb128 0xb
+ 1913 004e 27       		.uleb128 0x27
+ 1914 004f 19       		.uleb128 0x19
+ 1915 0050 11       		.uleb128 0x11
+ 1916 0051 01       		.uleb128 0x1
+ 1917 0052 12       		.uleb128 0x12
+ 1918 0053 06       		.uleb128 0x6
+ 1919 0054 40       		.uleb128 0x40
+ 1920 0055 18       		.uleb128 0x18
+ 1921 0056 9742     		.uleb128 0x2117
+ 1922 0058 19       		.uleb128 0x19
+ 1923 0059 01       		.uleb128 0x1
+ 1924 005a 13       		.uleb128 0x13
+ 1925 005b 00       		.byte	0
+ 1926 005c 00       		.byte	0
+ 1927 005d 07       		.uleb128 0x7
+ 1928 005e 898201   		.uleb128 0x4109
+ 1929 0061 00       		.byte	0
+ 1930 0062 11       		.uleb128 0x11
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 39
+
+
+ 1931 0063 01       		.uleb128 0x1
+ 1932 0064 31       		.uleb128 0x31
+ 1933 0065 13       		.uleb128 0x13
+ 1934 0066 00       		.byte	0
+ 1935 0067 00       		.byte	0
+ 1936 0068 08       		.uleb128 0x8
+ 1937 0069 898201   		.uleb128 0x4109
+ 1938 006c 01       		.byte	0x1
+ 1939 006d 11       		.uleb128 0x11
+ 1940 006e 01       		.uleb128 0x1
+ 1941 006f 31       		.uleb128 0x31
+ 1942 0070 13       		.uleb128 0x13
+ 1943 0071 01       		.uleb128 0x1
+ 1944 0072 13       		.uleb128 0x13
+ 1945 0073 00       		.byte	0
+ 1946 0074 00       		.byte	0
+ 1947 0075 09       		.uleb128 0x9
+ 1948 0076 8A8201   		.uleb128 0x410a
+ 1949 0079 00       		.byte	0
+ 1950 007a 02       		.uleb128 0x2
+ 1951 007b 18       		.uleb128 0x18
+ 1952 007c 9142     		.uleb128 0x2111
+ 1953 007e 18       		.uleb128 0x18
+ 1954 007f 00       		.byte	0
+ 1955 0080 00       		.byte	0
+ 1956 0081 0A       		.uleb128 0xa
+ 1957 0082 898201   		.uleb128 0x4109
+ 1958 0085 01       		.byte	0x1
+ 1959 0086 11       		.uleb128 0x11
+ 1960 0087 01       		.uleb128 0x1
+ 1961 0088 31       		.uleb128 0x31
+ 1962 0089 13       		.uleb128 0x13
+ 1963 008a 00       		.byte	0
+ 1964 008b 00       		.byte	0
+ 1965 008c 0B       		.uleb128 0xb
+ 1966 008d 2E       		.uleb128 0x2e
+ 1967 008e 01       		.byte	0x1
+ 1968 008f 3F       		.uleb128 0x3f
+ 1969 0090 19       		.uleb128 0x19
+ 1970 0091 03       		.uleb128 0x3
+ 1971 0092 0E       		.uleb128 0xe
+ 1972 0093 3A       		.uleb128 0x3a
+ 1973 0094 0B       		.uleb128 0xb
+ 1974 0095 3B       		.uleb128 0x3b
+ 1975 0096 0B       		.uleb128 0xb
+ 1976 0097 27       		.uleb128 0x27
+ 1977 0098 19       		.uleb128 0x19
+ 1978 0099 11       		.uleb128 0x11
+ 1979 009a 01       		.uleb128 0x1
+ 1980 009b 12       		.uleb128 0x12
+ 1981 009c 06       		.uleb128 0x6
+ 1982 009d 40       		.uleb128 0x40
+ 1983 009e 18       		.uleb128 0x18
+ 1984 009f 9742     		.uleb128 0x2117
+ 1985 00a1 19       		.uleb128 0x19
+ 1986 00a2 01       		.uleb128 0x1
+ 1987 00a3 13       		.uleb128 0x13
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 40
+
+
+ 1988 00a4 00       		.byte	0
+ 1989 00a5 00       		.byte	0
+ 1990 00a6 0C       		.uleb128 0xc
+ 1991 00a7 2E       		.uleb128 0x2e
+ 1992 00a8 01       		.byte	0x1
+ 1993 00a9 3F       		.uleb128 0x3f
+ 1994 00aa 19       		.uleb128 0x19
+ 1995 00ab 03       		.uleb128 0x3
+ 1996 00ac 0E       		.uleb128 0xe
+ 1997 00ad 3A       		.uleb128 0x3a
+ 1998 00ae 0B       		.uleb128 0xb
+ 1999 00af 3B       		.uleb128 0x3b
+ 2000 00b0 0B       		.uleb128 0xb
+ 2001 00b1 11       		.uleb128 0x11
+ 2002 00b2 01       		.uleb128 0x1
+ 2003 00b3 12       		.uleb128 0x12
+ 2004 00b4 06       		.uleb128 0x6
+ 2005 00b5 40       		.uleb128 0x40
+ 2006 00b6 18       		.uleb128 0x18
+ 2007 00b7 9642     		.uleb128 0x2116
+ 2008 00b9 19       		.uleb128 0x19
+ 2009 00ba 01       		.uleb128 0x1
+ 2010 00bb 13       		.uleb128 0x13
+ 2011 00bc 00       		.byte	0
+ 2012 00bd 00       		.byte	0
+ 2013 00be 0D       		.uleb128 0xd
+ 2014 00bf 34       		.uleb128 0x34
+ 2015 00c0 00       		.byte	0
+ 2016 00c1 03       		.uleb128 0x3
+ 2017 00c2 08       		.uleb128 0x8
+ 2018 00c3 3A       		.uleb128 0x3a
+ 2019 00c4 0B       		.uleb128 0xb
+ 2020 00c5 3B       		.uleb128 0x3b
+ 2021 00c6 0B       		.uleb128 0xb
+ 2022 00c7 49       		.uleb128 0x49
+ 2023 00c8 13       		.uleb128 0x13
+ 2024 00c9 02       		.uleb128 0x2
+ 2025 00ca 17       		.uleb128 0x17
+ 2026 00cb 00       		.byte	0
+ 2027 00cc 00       		.byte	0
+ 2028 00cd 0E       		.uleb128 0xe
+ 2029 00ce 34       		.uleb128 0x34
+ 2030 00cf 00       		.byte	0
+ 2031 00d0 03       		.uleb128 0x3
+ 2032 00d1 0E       		.uleb128 0xe
+ 2033 00d2 3A       		.uleb128 0x3a
+ 2034 00d3 0B       		.uleb128 0xb
+ 2035 00d4 3B       		.uleb128 0x3b
+ 2036 00d5 0B       		.uleb128 0xb
+ 2037 00d6 49       		.uleb128 0x49
+ 2038 00d7 13       		.uleb128 0x13
+ 2039 00d8 02       		.uleb128 0x2
+ 2040 00d9 18       		.uleb128 0x18
+ 2041 00da 00       		.byte	0
+ 2042 00db 00       		.byte	0
+ 2043 00dc 0F       		.uleb128 0xf
+ 2044 00dd 0B       		.uleb128 0xb
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 41
+
+
+ 2045 00de 01       		.byte	0x1
+ 2046 00df 55       		.uleb128 0x55
+ 2047 00e0 17       		.uleb128 0x17
+ 2048 00e1 01       		.uleb128 0x1
+ 2049 00e2 13       		.uleb128 0x13
+ 2050 00e3 00       		.byte	0
+ 2051 00e4 00       		.byte	0
+ 2052 00e5 10       		.uleb128 0x10
+ 2053 00e6 01       		.uleb128 0x1
+ 2054 00e7 01       		.byte	0x1
+ 2055 00e8 49       		.uleb128 0x49
+ 2056 00e9 13       		.uleb128 0x13
+ 2057 00ea 01       		.uleb128 0x1
+ 2058 00eb 13       		.uleb128 0x13
+ 2059 00ec 00       		.byte	0
+ 2060 00ed 00       		.byte	0
+ 2061 00ee 11       		.uleb128 0x11
+ 2062 00ef 21       		.uleb128 0x21
+ 2063 00f0 00       		.byte	0
+ 2064 00f1 49       		.uleb128 0x49
+ 2065 00f2 13       		.uleb128 0x13
+ 2066 00f3 2F       		.uleb128 0x2f
+ 2067 00f4 05       		.uleb128 0x5
+ 2068 00f5 00       		.byte	0
+ 2069 00f6 00       		.byte	0
+ 2070 00f7 12       		.uleb128 0x12
+ 2071 00f8 34       		.uleb128 0x34
+ 2072 00f9 00       		.byte	0
+ 2073 00fa 03       		.uleb128 0x3
+ 2074 00fb 0E       		.uleb128 0xe
+ 2075 00fc 3A       		.uleb128 0x3a
+ 2076 00fd 0B       		.uleb128 0xb
+ 2077 00fe 3B       		.uleb128 0x3b
+ 2078 00ff 0B       		.uleb128 0xb
+ 2079 0100 49       		.uleb128 0x49
+ 2080 0101 13       		.uleb128 0x13
+ 2081 0102 02       		.uleb128 0x2
+ 2082 0103 17       		.uleb128 0x17
+ 2083 0104 00       		.byte	0
+ 2084 0105 00       		.byte	0
+ 2085 0106 13       		.uleb128 0x13
+ 2086 0107 0B       		.uleb128 0xb
+ 2087 0108 01       		.byte	0x1
+ 2088 0109 11       		.uleb128 0x11
+ 2089 010a 01       		.uleb128 0x1
+ 2090 010b 12       		.uleb128 0x12
+ 2091 010c 06       		.uleb128 0x6
+ 2092 010d 01       		.uleb128 0x1
+ 2093 010e 13       		.uleb128 0x13
+ 2094 010f 00       		.byte	0
+ 2095 0110 00       		.byte	0
+ 2096 0111 14       		.uleb128 0x14
+ 2097 0112 2E       		.uleb128 0x2e
+ 2098 0113 01       		.byte	0x1
+ 2099 0114 3F       		.uleb128 0x3f
+ 2100 0115 19       		.uleb128 0x19
+ 2101 0116 03       		.uleb128 0x3
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 42
+
+
+ 2102 0117 0E       		.uleb128 0xe
+ 2103 0118 3A       		.uleb128 0x3a
+ 2104 0119 0B       		.uleb128 0xb
+ 2105 011a 3B       		.uleb128 0x3b
+ 2106 011b 0B       		.uleb128 0xb
+ 2107 011c 27       		.uleb128 0x27
+ 2108 011d 19       		.uleb128 0x19
+ 2109 011e 49       		.uleb128 0x49
+ 2110 011f 13       		.uleb128 0x13
+ 2111 0120 8701     		.uleb128 0x87
+ 2112 0122 19       		.uleb128 0x19
+ 2113 0123 11       		.uleb128 0x11
+ 2114 0124 01       		.uleb128 0x1
+ 2115 0125 12       		.uleb128 0x12
+ 2116 0126 06       		.uleb128 0x6
+ 2117 0127 40       		.uleb128 0x40
+ 2118 0128 18       		.uleb128 0x18
+ 2119 0129 9642     		.uleb128 0x2116
+ 2120 012b 19       		.uleb128 0x19
+ 2121 012c 01       		.uleb128 0x1
+ 2122 012d 13       		.uleb128 0x13
+ 2123 012e 00       		.byte	0
+ 2124 012f 00       		.byte	0
+ 2125 0130 15       		.uleb128 0x15
+ 2126 0131 34       		.uleb128 0x34
+ 2127 0132 00       		.byte	0
+ 2128 0133 03       		.uleb128 0x3
+ 2129 0134 08       		.uleb128 0x8
+ 2130 0135 3A       		.uleb128 0x3a
+ 2131 0136 0B       		.uleb128 0xb
+ 2132 0137 3B       		.uleb128 0x3b
+ 2133 0138 0B       		.uleb128 0xb
+ 2134 0139 49       		.uleb128 0x49
+ 2135 013a 13       		.uleb128 0x13
+ 2136 013b 02       		.uleb128 0x2
+ 2137 013c 18       		.uleb128 0x18
+ 2138 013d 00       		.byte	0
+ 2139 013e 00       		.byte	0
+ 2140 013f 16       		.uleb128 0x16
+ 2141 0140 34       		.uleb128 0x34
+ 2142 0141 00       		.byte	0
+ 2143 0142 03       		.uleb128 0x3
+ 2144 0143 0E       		.uleb128 0xe
+ 2145 0144 3A       		.uleb128 0x3a
+ 2146 0145 0B       		.uleb128 0xb
+ 2147 0146 3B       		.uleb128 0x3b
+ 2148 0147 05       		.uleb128 0x5
+ 2149 0148 49       		.uleb128 0x49
+ 2150 0149 13       		.uleb128 0x13
+ 2151 014a 3F       		.uleb128 0x3f
+ 2152 014b 19       		.uleb128 0x19
+ 2153 014c 3C       		.uleb128 0x3c
+ 2154 014d 19       		.uleb128 0x19
+ 2155 014e 00       		.byte	0
+ 2156 014f 00       		.byte	0
+ 2157 0150 17       		.uleb128 0x17
+ 2158 0151 35       		.uleb128 0x35
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 43
+
+
+ 2159 0152 00       		.byte	0
+ 2160 0153 49       		.uleb128 0x49
+ 2161 0154 13       		.uleb128 0x13
+ 2162 0155 00       		.byte	0
+ 2163 0156 00       		.byte	0
+ 2164 0157 18       		.uleb128 0x18
+ 2165 0158 34       		.uleb128 0x34
+ 2166 0159 00       		.byte	0
+ 2167 015a 03       		.uleb128 0x3
+ 2168 015b 08       		.uleb128 0x8
+ 2169 015c 3A       		.uleb128 0x3a
+ 2170 015d 0B       		.uleb128 0xb
+ 2171 015e 3B       		.uleb128 0x3b
+ 2172 015f 0B       		.uleb128 0xb
+ 2173 0160 49       		.uleb128 0x49
+ 2174 0161 13       		.uleb128 0x13
+ 2175 0162 3F       		.uleb128 0x3f
+ 2176 0163 19       		.uleb128 0x19
+ 2177 0164 02       		.uleb128 0x2
+ 2178 0165 18       		.uleb128 0x18
+ 2179 0166 00       		.byte	0
+ 2180 0167 00       		.byte	0
+ 2181 0168 19       		.uleb128 0x19
+ 2182 0169 34       		.uleb128 0x34
+ 2183 016a 00       		.byte	0
+ 2184 016b 03       		.uleb128 0x3
+ 2185 016c 0E       		.uleb128 0xe
+ 2186 016d 3A       		.uleb128 0x3a
+ 2187 016e 0B       		.uleb128 0xb
+ 2188 016f 3B       		.uleb128 0x3b
+ 2189 0170 0B       		.uleb128 0xb
+ 2190 0171 49       		.uleb128 0x49
+ 2191 0172 13       		.uleb128 0x13
+ 2192 0173 3F       		.uleb128 0x3f
+ 2193 0174 19       		.uleb128 0x19
+ 2194 0175 02       		.uleb128 0x2
+ 2195 0176 18       		.uleb128 0x18
+ 2196 0177 00       		.byte	0
+ 2197 0178 00       		.byte	0
+ 2198 0179 1A       		.uleb128 0x1a
+ 2199 017a 21       		.uleb128 0x21
+ 2200 017b 00       		.byte	0
+ 2201 017c 49       		.uleb128 0x49
+ 2202 017d 13       		.uleb128 0x13
+ 2203 017e 2F       		.uleb128 0x2f
+ 2204 017f 0B       		.uleb128 0xb
+ 2205 0180 00       		.byte	0
+ 2206 0181 00       		.byte	0
+ 2207 0182 1B       		.uleb128 0x1b
+ 2208 0183 2E       		.uleb128 0x2e
+ 2209 0184 00       		.byte	0
+ 2210 0185 3F       		.uleb128 0x3f
+ 2211 0186 19       		.uleb128 0x19
+ 2212 0187 3C       		.uleb128 0x3c
+ 2213 0188 19       		.uleb128 0x19
+ 2214 0189 6E       		.uleb128 0x6e
+ 2215 018a 0E       		.uleb128 0xe
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 44
+
+
+ 2216 018b 03       		.uleb128 0x3
+ 2217 018c 0E       		.uleb128 0xe
+ 2218 018d 3A       		.uleb128 0x3a
+ 2219 018e 0B       		.uleb128 0xb
+ 2220 018f 3B       		.uleb128 0x3b
+ 2221 0190 0B       		.uleb128 0xb
+ 2222 0191 00       		.byte	0
+ 2223 0192 00       		.byte	0
+ 2224 0193 1C       		.uleb128 0x1c
+ 2225 0194 2E       		.uleb128 0x2e
+ 2226 0195 00       		.byte	0
+ 2227 0196 3F       		.uleb128 0x3f
+ 2228 0197 19       		.uleb128 0x19
+ 2229 0198 3C       		.uleb128 0x3c
+ 2230 0199 19       		.uleb128 0x19
+ 2231 019a 6E       		.uleb128 0x6e
+ 2232 019b 08       		.uleb128 0x8
+ 2233 019c 03       		.uleb128 0x3
+ 2234 019d 08       		.uleb128 0x8
+ 2235 019e 3A       		.uleb128 0x3a
+ 2236 019f 0B       		.uleb128 0xb
+ 2237 01a0 3B       		.uleb128 0x3b
+ 2238 01a1 0B       		.uleb128 0xb
+ 2239 01a2 00       		.byte	0
+ 2240 01a3 00       		.byte	0
+ 2241 01a4 00       		.byte	0
+ 2242              		.section	.debug_loc,"",%progbits
+ 2243              	.Ldebug_loc0:
+ 2244              	.LLST0:
+ 2245 0000 28000000 		.4byte	.LVL11
+ 2246 0004 2E000000 		.4byte	.LVL12
+ 2247 0008 0200     		.2byte	0x2
+ 2248 000a 30       		.byte	0x30
+ 2249 000b 9F       		.byte	0x9f
+ 2250 000c 2E000000 		.4byte	.LVL12
+ 2251 0010 9E000000 		.4byte	.LVL25
+ 2252 0014 0100     		.2byte	0x1
+ 2253 0016 55       		.byte	0x55
+ 2254 0017 00000000 		.4byte	0
+ 2255 001b 00000000 		.4byte	0
+ 2256              	.LLST1:
+ 2257 001f 28000000 		.4byte	.LVL11
+ 2258 0023 2E000000 		.4byte	.LVL12
+ 2259 0027 0200     		.2byte	0x2
+ 2260 0029 30       		.byte	0x30
+ 2261 002a 9F       		.byte	0x9f
+ 2262 002b 2E000000 		.4byte	.LVL12
+ 2263 002f 9E000000 		.4byte	.LVL25
+ 2264 0033 0100     		.2byte	0x1
+ 2265 0035 54       		.byte	0x54
+ 2266 0036 00000000 		.4byte	0
+ 2267 003a 00000000 		.4byte	0
+ 2268              	.LLST2:
+ 2269 003e 28000000 		.4byte	.LVL31
+ 2270 0042 2E000000 		.4byte	.LVL32
+ 2271 0046 0200     		.2byte	0x2
+ 2272 0048 30       		.byte	0x30
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 45
+
+
+ 2273 0049 9F       		.byte	0x9f
+ 2274 004a 2E000000 		.4byte	.LVL32
+ 2275 004e 52000000 		.4byte	.LVL36
+ 2276 0052 0100     		.2byte	0x1
+ 2277 0054 55       		.byte	0x55
+ 2278 0055 52000000 		.4byte	.LVL36
+ 2279 0059 54000000 		.4byte	.LVL37
+ 2280 005d 0300     		.2byte	0x3
+ 2281 005f 75       		.byte	0x75
+ 2282 0060 01       		.sleb128 1
+ 2283 0061 9F       		.byte	0x9f
+ 2284 0062 54000000 		.4byte	.LVL37
+ 2285 0066 9E000000 		.4byte	.LVL45
+ 2286 006a 0100     		.2byte	0x1
+ 2287 006c 55       		.byte	0x55
+ 2288 006d 00000000 		.4byte	0
+ 2289 0071 00000000 		.4byte	0
+ 2290              	.LLST3:
+ 2291 0075 28000000 		.4byte	.LVL31
+ 2292 0079 2E000000 		.4byte	.LVL32
+ 2293 007d 0200     		.2byte	0x2
+ 2294 007f 30       		.byte	0x30
+ 2295 0080 9F       		.byte	0x9f
+ 2296 0081 2E000000 		.4byte	.LVL32
+ 2297 0085 9E000000 		.4byte	.LVL45
+ 2298 0089 0100     		.2byte	0x1
+ 2299 008b 54       		.byte	0x54
+ 2300 008c 00000000 		.4byte	0
+ 2301 0090 00000000 		.4byte	0
+ 2302              	.LLST4:
+ 2303 0094 06000000 		.4byte	.LVL47
+ 2304 0098 0A000000 		.4byte	.LVL48
+ 2305 009c 0100     		.2byte	0x1
+ 2306 009e 50       		.byte	0x50
+ 2307 009f 00000000 		.4byte	0
+ 2308 00a3 00000000 		.4byte	0
+ 2309              	.LLST5:
+ 2310 00a7 14000000 		.4byte	.LVL49
+ 2311 00ab 1F000000 		.4byte	.LVL50-1
+ 2312 00af 0100     		.2byte	0x1
+ 2313 00b1 50       		.byte	0x50
+ 2314 00b2 22000000 		.4byte	.LVL51
+ 2315 00b6 2D000000 		.4byte	.LVL52-1
+ 2316 00ba 0100     		.2byte	0x1
+ 2317 00bc 50       		.byte	0x50
+ 2318 00bd 00000000 		.4byte	0
+ 2319 00c1 00000000 		.4byte	0
+ 2320              	.LLST6:
+ 2321 00c5 58000000 		.4byte	.LVL70
+ 2322 00c9 5C000000 		.4byte	.LVL71
+ 2323 00cd 0200     		.2byte	0x2
+ 2324 00cf 30       		.byte	0x30
+ 2325 00d0 9F       		.byte	0x9f
+ 2326 00d1 5C000000 		.4byte	.LVL71
+ 2327 00d5 9C000000 		.4byte	.LVL78
+ 2328 00d9 0100     		.2byte	0x1
+ 2329 00db 54       		.byte	0x54
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 46
+
+
+ 2330 00dc 00000000 		.4byte	0
+ 2331 00e0 00000000 		.4byte	0
+ 2332              	.LLST7:
+ 2333 00e4 B2000000 		.4byte	.LVL83
+ 2334 00e8 B5000000 		.4byte	.LVL84-1
+ 2335 00ec 0100     		.2byte	0x1
+ 2336 00ee 50       		.byte	0x50
+ 2337 00ef 00000000 		.4byte	0
+ 2338 00f3 00000000 		.4byte	0
+ 2339              	.LLST8:
+ 2340 00f7 C8000000 		.4byte	.LVL88
+ 2341 00fb CB000000 		.4byte	.LVL89-1
+ 2342 00ff 0100     		.2byte	0x1
+ 2343 0101 50       		.byte	0x50
+ 2344 0102 00000000 		.4byte	0
+ 2345 0106 00000000 		.4byte	0
+ 2346              	.LLST9:
+ 2347 010a CC000000 		.4byte	.LVL89
+ 2348 010e D9000000 		.4byte	.LVL90-1
+ 2349 0112 0100     		.2byte	0x1
+ 2350 0114 50       		.byte	0x50
+ 2351 0115 DC000000 		.4byte	.LVL91
+ 2352 0119 EB000000 		.4byte	.LVL92-1
+ 2353 011d 0100     		.2byte	0x1
+ 2354 011f 50       		.byte	0x50
+ 2355 0120 00000000 		.4byte	0
+ 2356 0124 00000000 		.4byte	0
+ 2357              		.section	.debug_aranges,"",%progbits
+ 2358 0000 54000000 		.4byte	0x54
+ 2359 0004 0200     		.2byte	0x2
+ 2360 0006 00000000 		.4byte	.Ldebug_info0
+ 2361 000a 04       		.byte	0x4
+ 2362 000b 00       		.byte	0
+ 2363 000c 0000     		.2byte	0
+ 2364 000e 0000     		.2byte	0
+ 2365 0010 00000000 		.4byte	.LFB67
+ 2366 0014 30000000 		.4byte	.LFE67-.LFB67
+ 2367 0018 00000000 		.4byte	.LFB68
+ 2368 001c 20000000 		.4byte	.LFE68-.LFB68
+ 2369 0020 00000000 		.4byte	.LFB69
+ 2370 0024 B8000000 		.4byte	.LFE69-.LFB69
+ 2371 0028 00000000 		.4byte	.LFB65
+ 2372 002c 08000000 		.4byte	.LFE65-.LFB65
+ 2373 0030 00000000 		.4byte	.LFB70
+ 2374 0034 B8000000 		.4byte	.LFE70-.LFB70
+ 2375 0038 00000000 		.4byte	.LFB64
+ 2376 003c 08000000 		.4byte	.LFE64-.LFB64
+ 2377 0040 00000000 		.4byte	.LFB66
+ 2378 0044 34000000 		.4byte	.LFE66-.LFB66
+ 2379 0048 00000000 		.4byte	.LFB71
+ 2380 004c 1C010000 		.4byte	.LFE71-.LFB71
+ 2381 0050 00000000 		.4byte	0
+ 2382 0054 00000000 		.4byte	0
+ 2383              		.section	.debug_ranges,"",%progbits
+ 2384              	.Ldebug_ranges0:
+ 2385 0000 28000000 		.4byte	.LBB2
+ 2386 0004 2A000000 		.4byte	.LBE2
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 47
+
+
+ 2387 0008 2C000000 		.4byte	.LBB3
+ 2388 000c 5C000000 		.4byte	.LBE3
+ 2389 0010 00000000 		.4byte	0
+ 2390 0014 00000000 		.4byte	0
+ 2391 0018 28000000 		.4byte	.LBB4
+ 2392 001c 2A000000 		.4byte	.LBE4
+ 2393 0020 2C000000 		.4byte	.LBB5
+ 2394 0024 5C000000 		.4byte	.LBE5
+ 2395 0028 00000000 		.4byte	0
+ 2396 002c 00000000 		.4byte	0
+ 2397 0030 00000000 		.4byte	.LFB67
+ 2398 0034 30000000 		.4byte	.LFE67
+ 2399 0038 00000000 		.4byte	.LFB68
+ 2400 003c 20000000 		.4byte	.LFE68
+ 2401 0040 00000000 		.4byte	.LFB69
+ 2402 0044 B8000000 		.4byte	.LFE69
+ 2403 0048 00000000 		.4byte	.LFB65
+ 2404 004c 08000000 		.4byte	.LFE65
+ 2405 0050 00000000 		.4byte	.LFB70
+ 2406 0054 B8000000 		.4byte	.LFE70
+ 2407 0058 00000000 		.4byte	.LFB64
+ 2408 005c 08000000 		.4byte	.LFE64
+ 2409 0060 00000000 		.4byte	.LFB66
+ 2410 0064 34000000 		.4byte	.LFE66
+ 2411 0068 00000000 		.4byte	.LFB71
+ 2412 006c 1C010000 		.4byte	.LFE71
+ 2413 0070 00000000 		.4byte	0
+ 2414 0074 00000000 		.4byte	0
+ 2415              		.section	.debug_line,"",%progbits
+ 2416              	.Ldebug_line0:
+ 2417 0000 D7030000 		.section	.debug_str,"MS",%progbits,1
+ 2417      0200A902 
+ 2417      00000201 
+ 2417      FB0E0D00 
+ 2417      01010101 
+ 2418              	.LASF76:
+ 2419 0000 4455434B 		.ascii	"DUCK_Start\000"
+ 2419      5F537461 
+ 2419      727400
+ 2420              	.LASF47:
+ 2421 000b 56444143 		.ascii	"VDAC_SetValue\000"
+ 2421      5F536574 
+ 2421      56616C75 
+ 2421      6500
+ 2422              	.LASF42:
+ 2423 0019 4C43445F 		.ascii	"LCD_Char_WriteControl\000"
+ 2423      43686172 
+ 2423      5F577269 
+ 2423      7465436F 
+ 2423      6E74726F 
+ 2424              	.LASF45:
+ 2425 002f 4C43445F 		.ascii	"LCD_Char_PrintU32Number\000"
+ 2425      43686172 
+ 2425      5F507269 
+ 2425      6E745533 
+ 2425      324E756D 
+ 2426              	.LASF75:
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 48
+
+
+ 2427 0047 4A554D50 		.ascii	"JUMP_Start\000"
+ 2427      5F537461 
+ 2427      727400
+ 2428              	.LASF31:
+ 2429 0052 746D705F 		.ascii	"tmp_pot1\000"
+ 2429      706F7431 
+ 2429      00
+ 2430              	.LASF33:
+ 2431 005b 746D705F 		.ascii	"tmp_pot2\000"
+ 2431      706F7432 
+ 2431      00
+ 2432              	.LASF73:
+ 2433 0064 56444143 		.ascii	"VDAC_Start\000"
+ 2433      5F537461 
+ 2433      727400
+ 2434              	.LASF2:
+ 2435 006f 73686F72 		.ascii	"short int\000"
+ 2435      7420696E 
+ 2435      7400
+ 2436              	.LASF23:
+ 2437 0079 73697A65 		.ascii	"sizetype\000"
+ 2437      74797065 
+ 2437      00
+ 2438              	.LASF58:
+ 2439 0082 55415254 		.ascii	"UART_ReadRxStatus\000"
+ 2439      5F526561 
+ 2439      64527853 
+ 2439      74617475 
+ 2439      7300
+ 2440              	.LASF83:
+ 2441 0094 6D61696E 		.ascii	"main\000"
+ 2441      00
+ 2442              	.LASF28:
+ 2443 0099 496E7465 		.ascii	"InterruptionRX\000"
+ 2443      72727570 
+ 2443      74696F6E 
+ 2443      525800
+ 2444              	.LASF61:
+ 2445 00a8 414D5558 		.ascii	"AMUX_Select\000"
+ 2445      5F53656C 
+ 2445      65637400 
+ 2446              	.LASF4:
+ 2447 00b4 5F5F7569 		.ascii	"__uint16_t\000"
+ 2447      6E743136 
+ 2447      5F7400
+ 2448              	.LASF60:
+ 2449 00bf 4144435F 		.ascii	"ADC_IsEndConversion\000"
+ 2449      4973456E 
+ 2449      64436F6E 
+ 2449      76657273 
+ 2449      696F6E00 
+ 2450              	.LASF36:
+ 2451 00d3 76616C75 		.ascii	"value\000"
+ 2451      6500
+ 2452              	.LASF51:
+ 2453 00d9 55415254 		.ascii	"UART_PutString\000"
+ 2453      5F507574 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 49
+
+
+ 2453      53747269 
+ 2453      6E6700
+ 2454              	.LASF16:
+ 2455 00e8 75696E74 		.ascii	"uint16\000"
+ 2455      313600
+ 2456              	.LASF12:
+ 2457 00ef 75696E74 		.ascii	"uint8_t\000"
+ 2457      385F7400 
+ 2458              	.LASF74:
+ 2459 00f7 55415254 		.ascii	"UART_Start\000"
+ 2459      5F537461 
+ 2459      727400
+ 2460              	.LASF17:
+ 2461 0102 696E7431 		.ascii	"int16\000"
+ 2461      3600
+ 2462              	.LASF70:
+ 2463 0108 414D5558 		.ascii	"AMUX_Start\000"
+ 2463      5F537461 
+ 2463      727400
+ 2464              	.LASF19:
+ 2465 0113 666C6F61 		.ascii	"float\000"
+ 2465      7400
+ 2466              	.LASF54:
+ 2467 0119 4C454431 		.ascii	"LED1_Write\000"
+ 2467      5F577269 
+ 2467      746500
+ 2468              	.LASF77:
+ 2469 0124 4C43445F 		.ascii	"LCD_Char_Init\000"
+ 2469      43686172 
+ 2469      5F496E69 
+ 2469      7400
+ 2470              	.LASF9:
+ 2471 0132 6C6F6E67 		.ascii	"long long int\000"
+ 2471      206C6F6E 
+ 2471      6720696E 
+ 2471      7400
+ 2472              	.LASF67:
+ 2473 0140 6973725F 		.ascii	"isr_sw1_StartEx\000"
+ 2473      7377315F 
+ 2473      53746172 
+ 2473      74457800 
+ 2474              	.LASF69:
+ 2475 0150 4144435F 		.ascii	"ADC_Start\000"
+ 2475      53746172 
+ 2475      7400
+ 2476              	.LASF7:
+ 2477 015a 6C6F6E67 		.ascii	"long int\000"
+ 2477      20696E74 
+ 2477      00
+ 2478              	.LASF30:
+ 2479 0163 52656365 		.ascii	"Receiver\000"
+ 2479      69766572 
+ 2479      00
+ 2480              	.LASF25:
+ 2481 016c 73747269 		.ascii	"string\000"
+ 2481      6E6700
+ 2482              	.LASF66:
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 50
+
+
+ 2483 0173 6973725F 		.ascii	"isr_sw2_StartEx\000"
+ 2483      7377325F 
+ 2483      53746172 
+ 2483      74457800 
+ 2484              	.LASF41:
+ 2485 0183 54696D65 		.ascii	"Timer_Stop\000"
+ 2485      725F5374 
+ 2485      6F7000
+ 2486              	.LASF48:
+ 2487 018e 4C454433 		.ascii	"LED3_Write\000"
+ 2487      5F577269 
+ 2487      746500
+ 2488              	.LASF53:
+ 2489 0199 6973725F 		.ascii	"isr_1_StartEx\000"
+ 2489      315F5374 
+ 2489      61727445 
+ 2489      7800
+ 2490              	.LASF65:
+ 2491 01a7 6973725F 		.ascii	"isr_sw3_StartEx\000"
+ 2491      7377335F 
+ 2491      53746172 
+ 2491      74457800 
+ 2492              	.LASF46:
+ 2493 01b7 54696D65 		.ascii	"Timer_audio_ReadStatusRegister\000"
+ 2493      725F6175 
+ 2493      64696F5F 
+ 2493      52656164 
+ 2493      53746174 
+ 2494              	.LASF34:
+ 2495 01d6 706F7464 		.ascii	"potduck\000"
+ 2495      75636B00 
+ 2496              	.LASF40:
+ 2497 01de 5357335F 		.ascii	"SW3_Read\000"
+ 2497      52656164 
+ 2497      00
+ 2498              	.LASF22:
+ 2499 01e7 6C6F6E67 		.ascii	"long double\000"
+ 2499      20646F75 
+ 2499      626C6500 
+ 2500              	.LASF59:
+ 2501 01f3 6B657970 		.ascii	"keypadScan\000"
+ 2501      61645363 
+ 2501      616E00
+ 2502              	.LASF1:
+ 2503 01fe 756E7369 		.ascii	"unsigned char\000"
+ 2503      676E6564 
+ 2503      20636861 
+ 2503      7200
+ 2504              	.LASF57:
+ 2505 020c 55415254 		.ascii	"UART_ReadRxData\000"
+ 2505      5F526561 
+ 2505      64527844 
+ 2505      61746100 
+ 2506              	.LASF43:
+ 2507 021c 4C43445F 		.ascii	"LCD_Char_Position\000"
+ 2507      43686172 
+ 2507      5F506F73 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 51
+
+
+ 2507      6974696F 
+ 2507      6E00
+ 2508              	.LASF0:
+ 2509 022e 7369676E 		.ascii	"signed char\000"
+ 2509      65642063 
+ 2509      68617200 
+ 2510              	.LASF38:
+ 2511 023a 73636F72 		.ascii	"score\000"
+ 2511      6500
+ 2512              	.LASF10:
+ 2513 0240 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2513      206C6F6E 
+ 2513      6720756E 
+ 2513      7369676E 
+ 2513      65642069 
+ 2514              	.LASF62:
+ 2515 0257 4144435F 		.ascii	"ADC_GetResult32\000"
+ 2515      47657452 
+ 2515      6573756C 
+ 2515      74333200 
+ 2516              	.LASF11:
+ 2517 0267 756E7369 		.ascii	"unsigned int\000"
+ 2517      676E6564 
+ 2517      20696E74 
+ 2517      00
+ 2518              	.LASF13:
+ 2519 0274 75696E74 		.ascii	"uint16_t\000"
+ 2519      31365F74 
+ 2519      00
+ 2520              	.LASF78:
+ 2521 027d 6B657970 		.ascii	"keypadInit\000"
+ 2521      6164496E 
+ 2521      697400
+ 2522              	.LASF71:
+ 2523 0288 4C43445F 		.ascii	"LCD_Char_Start\000"
+ 2523      43686172 
+ 2523      5F537461 
+ 2523      727400
+ 2524              	.LASF5:
+ 2525 0297 73686F72 		.ascii	"short unsigned int\000"
+ 2525      7420756E 
+ 2525      7369676E 
+ 2525      65642069 
+ 2525      6E7400
+ 2526              	.LASF29:
+ 2527 02aa 73746174 		.ascii	"status\000"
+ 2527      757300
+ 2528              	.LASF27:
+ 2529 02b1 6A756D70 		.ascii	"jump\000"
+ 2529      00
+ 2530              	.LASF21:
+ 2531 02b6 63686172 		.ascii	"char\000"
+ 2531      00
+ 2532              	.LASF82:
+ 2533 02bb 433A5C55 		.ascii	"C:\\Users\\sucra\\Documents\\ELECH310 Projet\\desig"
+ 2533      73657273 
+ 2533      5C737563 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 52
+
+
+ 2533      72615C44 
+ 2533      6F63756D 
+ 2534 02e9 6E312E63 		.ascii	"n1.cydsn\\design1.cydsn\000"
+ 2534      7964736E 
+ 2534      5C646573 
+ 2534      69676E31 
+ 2534      2E637964 
+ 2535              	.LASF37:
+ 2536 0300 6D735F63 		.ascii	"ms_count\000"
+ 2536      6F756E74 
+ 2536      00
+ 2537              	.LASF24:
+ 2538 0309 4D595F49 		.ascii	"MY_ISR\000"
+ 2538      535200
+ 2539              	.LASF14:
+ 2540 0310 696E7433 		.ascii	"int32_t\000"
+ 2540      325F7400 
+ 2541              	.LASF32:
+ 2542 0318 706F746A 		.ascii	"potjump\000"
+ 2542      756D7000 
+ 2543              	.LASF15:
+ 2544 0320 75696E74 		.ascii	"uint8\000"
+ 2544      3800
+ 2545              	.LASF39:
+ 2546 0326 77617665 		.ascii	"wave\000"
+ 2546      00
+ 2547              	.LASF44:
+ 2548 032b 4C43445F 		.ascii	"LCD_Char_PrintString\000"
+ 2548      43686172 
+ 2548      5F507269 
+ 2548      6E745374 
+ 2548      72696E67 
+ 2549              	.LASF68:
+ 2550 0340 6973725F 		.ascii	"isr_RX_StartEx\000"
+ 2550      52585F53 
+ 2550      74617274 
+ 2550      457800
+ 2551              	.LASF72:
+ 2552 034f 54696D65 		.ascii	"Timer_audio_Start\000"
+ 2552      725F6175 
+ 2552      64696F5F 
+ 2552      53746172 
+ 2552      7400
+ 2553              	.LASF81:
+ 2554 0361 6D61696E 		.ascii	"main.c\000"
+ 2554      2E6300
+ 2555              	.LASF50:
+ 2556 0368 4455434B 		.ascii	"DUCK_WriteCompare\000"
+ 2556      5F577269 
+ 2556      7465436F 
+ 2556      6D706172 
+ 2556      6500
+ 2557              	.LASF8:
+ 2558 037a 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2558      20756E73 
+ 2558      69676E65 
+ 2558      6420696E 
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 53
+
+
+ 2558      7400
+ 2559              	.LASF18:
+ 2560 038c 696E7433 		.ascii	"int32\000"
+ 2560      3200
+ 2561              	.LASF20:
+ 2562 0392 646F7562 		.ascii	"double\000"
+ 2562      6C6500
+ 2563              	.LASF63:
+ 2564 0399 4144435F 		.ascii	"ADC_CountsTo_mVolts\000"
+ 2564      436F756E 
+ 2564      7473546F 
+ 2564      5F6D566F 
+ 2564      6C747300 
+ 2565              	.LASF52:
+ 2566 03ad 54696D65 		.ascii	"Timer_Start\000"
+ 2566      725F5374 
+ 2566      61727400 
+ 2567              	.LASF6:
+ 2568 03b9 5F5F696E 		.ascii	"__int32_t\000"
+ 2568      7433325F 
+ 2568      7400
+ 2569              	.LASF56:
+ 2570 03c3 4A554D50 		.ascii	"JUMP_WriteCompare\000"
+ 2570      5F577269 
+ 2570      7465436F 
+ 2570      6D706172 
+ 2570      6500
+ 2571              	.LASF55:
+ 2572 03d5 4C454432 		.ascii	"LED2_Write\000"
+ 2572      5F577269 
+ 2572      746500
+ 2573              	.LASF79:
+ 2574 03e0 4144435F 		.ascii	"ADC_StartConvert\000"
+ 2574      53746172 
+ 2574      74436F6E 
+ 2574      76657274 
+ 2574      00
+ 2575              	.LASF26:
+ 2576 03f1 6475636B 		.ascii	"duck\000"
+ 2576      00
+ 2577              	.LASF35:
+ 2578 03f6 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2578      52784275 
+ 2578      66666572 
+ 2578      00
+ 2579              	.LASF80:
+ 2580 0403 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2580      43313120 
+ 2580      352E342E 
+ 2580      31203230 
+ 2580      31363036 
+ 2581 0436 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2581      20726576 
+ 2581      6973696F 
+ 2581      6E203233 
+ 2581      37373135 
+ 2582 0469 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ARM GAS  C:\Users\sucra\AppData\Local\Temp\cctzm17f.s 			page 54
+
+
+ 2582      66756E63 
+ 2582      74696F6E 
+ 2582      2D736563 
+ 2582      74696F6E 
+ 2583              	.LASF64:
+ 2584 0491 43794465 		.ascii	"CyDelay\000"
+ 2584      6C617900 
+ 2585              	.LASF49:
+ 2586 0499 4C454434 		.ascii	"LED4_Write\000"
+ 2586      5F577269 
+ 2586      746500
+ 2587              	.LASF3:
+ 2588 04a4 5F5F7569 		.ascii	"__uint8_t\000"
+ 2588      6E74385F 
+ 2588      7400
+ 2589              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

@@ -1,0 +1,6 @@
+C:\Users\sucra\Documents\ELECH310 Projet\design1.cydsn\design1.cydsn\design1.cyprj|1a41936f-3d0d-4b66-b1a8-f708cd367e9c
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|8010c031-792d-48aa-8182-04b328526650
+C:\Users\sucra\Documents\PSoC Creator\4.4\Downloads ( 4.4).cylib\Downloads ( 4.4).cyprj|8bfd57c6-4186-4137-a4e1-3df5582d9d3b
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|da544538-d8f6-4846-8f00-a8cb291272c4
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|8962e181-4f49-458e-960c-df96bbcdc40f
+C:\Program Files (x86)\Cypress\PSoC Creator\4.4\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|5ab166ff-3dc0-40fc-9d84-8384a486c81e
